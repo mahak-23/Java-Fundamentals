@@ -1,4 +1,4 @@
-# JavaSetup Learning Workspace
+# Java Fundamentals Workspace
 
 A comprehensive, hands-on Java learning repository for **beginner-to-intermediate developers** with practical examples, data structures, and interview preparation materials.
 
