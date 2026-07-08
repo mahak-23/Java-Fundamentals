@@ -1,23 +1,8 @@
 # Java Fundamentals Workspace
 
-A comprehensive, hands-on Java learning repository for **beginner-to-intermediate developers** with practical examples, data structures, and interview preparation materials.
+A comprehensive, hands-on Java learning repository for **beginner-to-intermediate developers**. It covers core Java syntax, object-oriented programming, collections, and common data structures with runnable examples and interview-focused notes.
 
-## ⚡ Quick Start
-
-### Prerequisites
-- Java Development Kit (JDK) 8+ installed
-- Text editor or VS Code
-- Basic command-line knowledge
-
-### First Program (2 minutes)
-```bash
-cd java\ basics
-javac HelloJava.java
-java java.basics.HelloJava
-```
-Expected output: `Hello, Java!`
-
----
+Folders are **numbered in learning order** (`01_`, `02_`, …). Each folder contains a [`_README.md`](01_java_basics/_README.md) with theory, examples, and quick reference. Java **package names** match topics without numbers (`java_basics`, `arrays`, `stack`) because packages cannot start with a digit.
 
 ## 📚 What You Will Learn
 
@@ -25,259 +10,122 @@ Expected output: `Hello, Java!`
 |-------|----------|-------|
 | **Basics** | Variables, loops, methods, control flow | Beginner |
 | **Data Structures** | Arrays, strings, linked lists, stacks, queues, hash tables | Intermediate |
-| **OOP** | Classes, inheritance, polymorphism, encapsulation, interfaces | Beginner-Intermediate |
+| **OOP** | Classes, inheritance, polymorphism, encapsulation, interfaces | Beginner–Intermediate |
 | **Collections** | List, Set, Map implementations and operations | Intermediate |
 | **Advanced** | Streams, lambdas, regex, JVM concepts | Intermediate |
 | **Interview Prep** | Common algorithms, problem-solving patterns | Intermediate |
 
-## 📁 Folder Guide & Difficulty Levels
+## 📁 Folder Guide and Difficulty Levels
 
-| Folder | Contents | Difficulty | Time | Key Files |
-|--------|----------|-----------|------|-----------|
-| **java basics/** | Variables, loops, methods, operators | Beginner | 1-2 hrs | HelloJava, DataType, Loops, Methods |
-| **arrays/** | Array operations, searching, sorting, matrix problems | Intermediate | 2-3 hrs | ArraysExample, SpiralMatrix, MaxSubarraySum |
-| **strings/** | String operations, immutability, StringBuilder | Beginner-Intermediate | 1-2 hrs | StringsExample, StringBuilderExample |
-| **oops/** | Classes, objects, inheritance, constructors | Beginner-Intermediate | 2-3 hrs | ClassAndObject, ConstructorsExample |
-| **collections/** | List, Set, Map interfaces and operations | Intermediate | 1-2 hrs | CollectionsConcepts |
-| **stack/** | LIFO stack, bracket matching, postfix evaluation | Intermediate | 2-3 hrs | StackOperations, StackInterviewProblems |
-| **queue/** | FIFO queue, BFS, sliding window, deque | Intermediate | 2-3 hrs | QueueOperations, QueueInterviewProblems |
-| **LinkedList/** | Singly/doubly linked lists, cycle detection | Intermediate | 2-3 hrs | LinkedListBasics, LinkedListProblems |
-| **Hashmaps & Hashsets/** | Hash tables, collision handling, hashing | Intermediate | 2-3 hrs | Hashmaps, Hashsets, custom implementations |
-| **exception_handling/** | Try-catch, custom exceptions, handling | Beginner | 1 hr | ExceptionHandlingExample |
-| **regex/** | Pattern matching, text processing | Intermediate | 1-2 hrs | RegexExample, MatcherExample |
-| **interfaces/** | Interface contracts, functional interfaces | Beginner-Intermediate | 1 hr | InterfacesExample, FunctionalInterfaceExample |
-| **streams_and_lambdas/** | Stream API, lambda expressions, functional programming | Intermediate | 2-3 hrs | LambdaExpressionsExample, StreamsExample |
-| **jvm/jdk/** | Java compilation, runtime, bytecode | Intermediate | 1 hr | JavaVersion |
+| # | Folder | Contents | Difficulty | Key Files |
+|---|--------|----------|------------|-----------|
+| 01 | [java_basics](01_java_basics/) | Variables, loops, methods, operators | Beginner | HelloJava, DataType, Loops, Methods |
+| 02 | [oops](02_oops/) | Classes, objects, inheritance, constructors | Beginner–Intermediate | ClassAndObject, ConstructorsExample, OOPConcepts |
+| 03 | [strings](03_strings/) | String pool, immutability, StringBuilder, formatting | Beginner–Intermediate | StringsExample, StringBuilderExample, PalindromeExample |
+| 04 | [arrays](04_arrays/) | Array operations, prefix sum, matrix problems | Intermediate | ArraysExample, PrefixSum, MaxSubarraySum, SpiralMatrix |
+| 05 | [collections](05_collections/) | List, Set, Map interfaces and operations | Intermediate | CollectionsConcepts |
+| 06 | [stack](06_stack/) | LIFO stack, bracket matching, postfix evaluation | Intermediate | StackOperations, StackInterviewProblems |
+| 07 | [queue](07_queue/) | FIFO queue, BFS, sliding window, circular queue | Intermediate | QueueOperations, QueueInterviewProblems |
+| 08 | [linkedlist](08_linkedlist/) | Singly linked lists, reversal, cycle detection | Intermediate | LinkedListBasics, LinkedListProblems |
+| 09 | [hashmaps_and_hashsets](09_hashmaps_and_hashsets/) | Hash tables, collision handling, hashing | Intermediate | Hashmaps, Hashsets, custom implementations |
+| 10 | [exception_handling](10_exception_handling/) | Try-catch, custom exceptions | Beginner | ExceptionHandlingExample |
+| 11 | [interfaces](11_interfaces/) | Interface contracts, functional interfaces | Beginner–Intermediate | InterfacesExample, FunctionalInterfaceExample |
+| 12 | [streams_and_lambdas](12_streams_and_lambdas/) | Stream API, Collectors, lambda expressions | Intermediate | StreamsExample, AdvancedStreamsExample |
+| 13 | [regex](13_regex/) | Pattern matching, text processing | Intermediate | RegexExample, MatcherExample |
+| 14 | [jvm_jdk](14_jvm_jdk/) | Java compilation, runtime, bytecode | Intermediate | JavaVersion |
 
-## 🎯 Recommended Learning Paths
+## 📖 Repository Organization
 
-### Path 1: Complete Beginner
-**Goal:** Build solid Java fundamentals (6-8 hours)
-1. **java basics/** (2 hrs) - Start here if you're new to Java
-   - Read: HelloJava, DataType, Operators, Loops, Methods
-   - Run each example and modify them
+Each folder follows this structure:
 
-2. **oops/** (2 hrs) - Understand objects and classes
-   - Read: ClassAndObject, ConstructorsExample, OOPConcepts
-   
-3. **strings/** (1 hr) - Work with text
-   - Read: StringsExample, StringBuilderExample
-
-4. **arrays/** (1 hr) - Arrays fundamentals
-   - Read: ArraysExample, understand indexing
-
-Then continue with **intermediate path**.
-
-### Path 2: Intermediate Developer (Skip to here if you know basics)
-**Goal:** Master data structures and problem-solving (8-10 hours)
-1. **arrays/** (2 hrs) - Array algorithms and problems
-2. **collections/** (1 hr) - List, Set, Map operations
-3. **stack/** (2 hrs) - Stack concepts and interview problems
-4. **queue/** (2 hrs) - Queue concepts and BFS algorithms
-5. **LinkedList/** (2 hrs) - Linked list operations and problems
-6. **Hashmaps & Hashsets/** (1 hr) - Hash table internals
-
-### Path 3: Interview Preparation (2-3 weeks)
-1. Review all **InterviewProblems files** (stack, queue, linked list)
-2. Practice with dry runs on paper first
-3. Implement solutions from scratch (no copy-paste)
-4. Time yourself: aim for 15-20 minutes per problem
-
-### Path 4: Advanced Topics (Optional)
-- **streams_and_lambdas/** - Functional programming
-- **regex/** - Text pattern processing
-- **exception_handling/** - Error handling strategies
-- **interfaces/** - Design patterns
-- **jvm/jdk/** - How Java runs under the hood
-
-## 💡 How to Use This Repository
-
-### Step-by-Step Guide
-1. **Pick a learning path** above (Path 1, 2, 3, or 4)
-2. **Read the README** in each folder before running code
-3. **Compile and run** examples from the project root:
-   ```bash
-   # Example: compile a specific file
-   javac java\ basics\HelloJava.java
-   
-   # Run the program
-   java java.basics.HelloJava
-   
-   # Compile all files in a folder
-   javac arrays\*.java
-   ```
-4. **Study the code** - understand what each line does
-5. **Modify examples** - change values, add features, experiment
-6. **Read interview problems** - try to solve before looking at solutions
-
-### Tips for Effective Learning
-- ✅ **Run code first** - see the output before reading the code
-- ✅ **Trace through examples** - mentally execute the code line by line
-- ✅ **Type code yourself** - don't copy-paste; typing helps memorize patterns
-- ✅ **Break it down** - if a file is complex, focus on one method at a time
-- ✅ **Test edge cases** - what happens with empty inputs, negatives, nulls?
-- ✅ **Use a debugger** - VS Code has built-in Java debugger
-- ✅ **Practice dry runs** - trace through array operations on paper
-
-### Best Practices
-- Read `_README.md` files first for theory
-- Look for **"Time complexity"** and **"Space complexity"** headers
-- Check **"Quick reference"** sections for common operations
-- Use **interview notes** for key concepts to remember
-
-## 📝 Common Commands Reference
-
-```bash
-# Compile a single file
-javac java\ basics\HelloJava.java
-
-# Run a compiled program (note: full package path, no .class)
-java java.basics.HelloJava
-
-# Compile all .java files in a folder
-javac arrays\*.java
-
-# Compile with debugging info (if using debugger)
-javac -g arrays\ArraysExample.java
-
-# Clean up compiled .class files
-del /s *.class
-
-# Compile and run in one command (advanced)
-javac arrays\ArraysExample.java && java arrays.ArraysExample
 ```
-
-## ⚠️ Common Errors & Solutions
-
-| Error | Cause | Solution |
-|-------|-------|----------|
-| `'javac' is not recognized` | JDK not installed | Install JDK 8+ and add to PATH |
-| `cannot find symbol` | Misspelled variable/method | Check spelling and capitalization |
-| `Main method not found` | No `public static void main(String[] args)` | Add proper main method to class |
-| `Exception in thread "main"` | Runtime error in program | Read the error message, add `System.out.println()` for debugging |
-| `class HelloJava is public, should be declared in a file named HelloJava.java` | Filename mismatch | Rename file to match public class name |
-
-## ❓ FAQ
-
-**Q: Do I need to download anything besides the code?**
-A: Just Java JDK (free from java.com or oracle.com). Everything else is included.
-
-**Q: Can I run these on Mac/Linux?**
-A: Yes! Paths use forward slashes on Mac/Linux: `javac java/basics/HelloJava.java`
-
-**Q: How long does each section take?**
-A: See the **Folder Guide** table above for estimated time per topic.
-
-**Q: Can I skip topics?**
-A: Beginners should follow Path 1 sequentially. Experienced devs can jump to Path 2.
-
-**Q: Where do I find more practice problems?**
-A: Each folder's `InterviewProblems` or `Problems` file has additional challenges.
-
-**Q: How do I know if my solution is correct?**
-A: Run the provided examples and compare output. Check complexity: O(n) should be faster than O(n²).
-
-**Q: Should I memorize Big-O notation?**
-A: No, but understand: O(1) is fastest, O(n) is linear, O(n²) is slow, O(log n) is efficient.
-
----
+folder/
+├── _README.md              # Theory, examples, quick reference, interview notes
+├── TopicExample.java       # Beginner-friendly runnable examples
+├── InterviewProblems.java  # Intermediate problem-solving examples
+└── Custom*.java            # Custom implementations (where applicable)
+```
 
 ## 🎓 Interview Preparation Checklist
 
-**Before your interview, master these:**
+Before your interview, master these:
 
 ### Core Java Concepts
-- [ ] Primitive vs. reference types (int, String, arrays)
-- [ ] Stack vs. heap memory
-- [ ] Pass by value vs. pass by reference
+- [ ] Primitive vs reference types (`int`, `String`, arrays)
+- [ ] Stack vs heap memory
+- [ ] Pass by value vs pass by reference
 - [ ] String immutability and StringBuilder
 - [ ] Exception handling (try-catch-finally)
 
 ### Object-Oriented Programming
 - [ ] Classes, objects, and constructors
-- [ ] Inheritance and super keyword
+- [ ] Inheritance and `super` keyword
 - [ ] Polymorphism (method overriding)
 - [ ] Encapsulation (private, public, getters/setters)
 - [ ] Abstraction and interfaces
-- [ ] When to use inheritance vs. composition
+- [ ] When to use inheritance vs composition
 
-### Data Structures & Collections
+### Data Structures and Collections
 - [ ] Array operations and time complexity
-- [ ] ArrayList vs. LinkedList (when to use which?)
-- [ ] HashSet vs. TreeSet
-- [ ] HashMap/Hashtable collisions and load factor
-- [ ] Collections.sort() and custom comparators
+- [ ] ArrayList vs LinkedList — when to use which
+- [ ] HashSet vs TreeSet
+- [ ] HashMap collisions and load factor
+- [ ] `Collections.sort()` and custom comparators
 
-### Algorithms (Most Important!)
+### Algorithms
 - [ ] Stack: bracket matching, postfix evaluation, DFS
 - [ ] Queue: BFS, level-order traversal, sliding window
-- [ ] Linked Lists: reverse, cycle detection, merge
+- [ ] Linked lists: reverse, cycle detection, merge
 - [ ] Arrays: binary search, prefix sums, two-pointer technique
-- [ ] Hash tables: two-sum problem, duplicate detection
+- [ ] Hash tables: two-sum, duplicate detection
 
 ### Problem-Solving Strategy
-- [ ] Read problem carefully and ask clarifying questions
-- [ ] Discuss approach before coding (think for 10 seconds)
+- [ ] Read the problem carefully; ask clarifying questions
+- [ ] Discuss approach before coding
 - [ ] Start with brute force, then optimize
-- [ ] Write clean, readable code with comments
-- [ ] Test with edge cases (empty, single element, null)
-- [ ] Discuss time and space complexity
+- [ ] Write clean, readable code
+- [ ] Test edge cases (empty, single element, null)
+- [ ] State time and space complexity
 
-### Advanced Topics (If Applicable)
+### Advanced Topics (if applicable)
 - [ ] Streams and lambdas
 - [ ] Generics and type parameters
-- [ ] Custom comparable/comparator
+- [ ] Custom Comparable / Comparator
 - [ ] Regular expressions
 
----
+## Interview + DSA Problems
 
-## 📖 Repository Organization
+| Pattern / Concept | Folder | Key idea | Example problems |
+|-------------------|--------|----------|------------------|
+| Primitive vs reference, pass by value | [java_basics](01_java_basics/DataType.java) | `int` vs `Integer`; Java passes reference copies | Explain variable behavior |
+| String pool, `==` vs `.equals()` | [strings](03_strings/StringsExample.java) | Literals in pool; use `.equals()` for content | String comparison questions |
+| StringBuilder in loops | [strings](03_strings/StringBuilderExample.java) | Avoid O(n²) string concatenation | Build strings efficiently |
+| Two-pointer | [strings](03_strings/PalindromeExample.java), [arrays](04_arrays/TrapRainWater.java) | Start/end pointers moving inward | Palindrome, Two Sum II, 3Sum |
+| Prefix sum | [arrays](04_arrays/PrefixSum.java) | O(1) range sum after O(n) preprocessing | Subarray sum, range queries |
+| Kadane / sliding window | [arrays](04_arrays/MaxSubarraySum.java) | Max subarray, contiguous window | Max subarray, longest substring |
+| Binary search | [arrays](04_arrays/ArraysExample.java) | O(log n) on sorted data | Search rotated array |
+| Matrix traversal | [arrays](04_arrays/SpiralMatrix.java) | Row/column iteration, spiral | Spiral matrix, rotate image |
+| List vs Set vs Map | [collections](05_collections/CollectionsConcepts.java) | Order, uniqueness, key-value lookup | Choose right collection |
+| Stack (LIFO) | [stack](06_stack/StackInterviewProblems.java) | Push/pop top; monotonic stack | Valid parentheses, next greater element |
+| Queue (FIFO) | [queue](07_queue/QueueInterviewProblems.java) | Enqueue rear, dequeue front; BFS | Level-order traversal, shortest path |
+| Fast/slow pointers | [linkedlist](08_linkedlist/LinkedListProblems.java) | Cycle detection, find middle | Linked list cycle, middle node |
+| Reverse linked list | [linkedlist](08_linkedlist/LinkedListProblems.java) | Three pointers: prev, curr, next | Reverse list, palindrome list |
+| HashMap frequency | [hashmaps_and_hashsets](09_hashmaps_and_hashsets/Hashmaps.java) | O(1) avg lookup; count/group by key | Two sum, group anagrams |
+| HashSet uniqueness | [hashmaps_and_hashsets](09_hashmaps_and_hashsets/Hashsets.java) | O(1) avg contains check | Contains duplicate |
+| Hash collision handling | [hashmaps_and_hashsets](09_hashmaps_and_hashsets/SeparateChainingHashMap.java) | Chaining vs probing; load factor | Explain HashMap internals |
+| OOP four pillars | [oops](02_oops/OOPConcepts.java) | Encapsulation, inheritance, polymorphism | Override vs overload |
+| Interface vs abstract class | [interfaces](11_interfaces/InterfacesExample.java) | Contract vs partial implementation | Design choice questions |
+| Streams + Collectors | [streams_and_lambdas](12_streams_and_lambdas/AdvancedStreamsExample.java) | filter, map, collect, groupingBy | Data transformation pipelines |
+| JVM, stack vs heap | [jvm_jdk](14_jvm_jdk/JavaVersion.java) | Bytecode, compilation flow, memory | How Java runs |
 
-Each folder follows this structure for consistency:
+## Big-O Cheat Sheet
 
-```
-folder/
-├── _README.md              # Start here! Contains:
-│                           # - Theory and concepts
-│                           # - Operation examples with output
-│                           # - Time/space complexity
-│                           # - Quick reference section
-├── TopicExample.java       # Beginner-friendly examples
-├── InterviewProblems.java  # Intermediate-level problems
-└── Custom*.java            # Custom implementations (if applicable)
-```
+| Operation | Array | Linked List | HashMap | Stack/Queue |
+|-----------|-------|-------------|---------|-------------|
+| Access by index | O(1) | O(n) | — | — |
+| Search | O(n) | O(n) | O(1) avg | O(n) |
+| Insert at end | O(1)* | O(1) | O(1) avg | O(1) |
+| Insert at middle | O(n) | O(n) | — | — |
+| Delete | O(n) | O(n) | O(1) avg | O(1) |
 
-### Reading a _README.md
-1. **Start with the concept explanation** (first 10 lines)
-2. **Look at the table of contents** (if provided)
-3. **Find your operation/problem** (use Ctrl+F to search)
-4. **Read example code** with output comments
-5. **Check "Quick reference"** for all operations
-6. **Review "Interview notes"** for key tips
-
----
-
-## 🚀 Next Steps
-
-- **Week 1**: Complete Beginner Path (java basics → oops → strings)
-- **Week 2-3**: Intermediate Path (arrays → collections → stack → queue → linked list)
-- **Week 4**: Interview Problems & Dry Runs
-- **Week 5+**: Practice problems on LeetCode (Easy → Medium)
-
-### Advanced Resources (After This Course)
-- **LeetCode** - Problem-solving practice
-- **HackerRank** - Guided tutorials
-- **GeeksforGeeks** - Detailed explanations
-- **System Design** - If preparing for senior roles
-
----
-
-## 📄 Repository Status
-
-✅ All files compile successfully
-✅ All data structures documented with examples
-✅ Interview problems included in each module
-✅ Quick-reference guides provided
-✅ Best practices and patterns explained
-
-**Ready to learn? Start with your chosen learning path above!**
+*ArrayList amortized O(1) for append.
