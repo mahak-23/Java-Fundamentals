@@ -2,7 +2,118 @@
 
 > **Prerequisites:** [05_collections](../05_collections/_README.md)
 
-Pointer-based structure — see `LinkedListProblems.java` header for each algorithm explained.
+A linked list is a linear data structure where each node points to the next node. It is useful when you need efficient insertion and deletion at the front or middle without shifting elements like in arrays.
+
+## How to create a linked list in Java
+
+A linked list is usually built from a simple node class:
+
+```java
+class Node {
+    int data;
+    Node next;
+
+    Node(int data) {
+        this.data = data;
+    }
+}
+```
+
+You can create a list by connecting nodes manually:
+
+```java
+Node head = new Node(10);
+Node second = new Node(20);
+Node third = new Node(30);
+
+head.next = second;
+second.next = third;
+```
+
+## Common operations
+
+### 1. Insert at the front
+
+```java
+Node newHead = new Node(5);
+newHead.next = head;
+head = newHead;
+```
+
+### 2. Insert at the end
+
+```java
+Node current = head;
+while (current.next != null) {
+    current = current.next;
+}
+current.next = new Node(40);
+```
+
+### 3. Traverse the list
+
+```java
+Node current = head;
+while (current != null) {
+    System.out.print(current.data + " ");
+    current = current.next;
+}
+```
+
+### 4. Delete a node
+
+```java
+Node prev = null;
+Node current = head;
+while (current != null && current.data != 20) {
+    prev = current;
+    current = current.next;
+}
+if (current != null) {
+    prev.next = current.next;
+}
+```
+
+### 5. Search and update
+
+```java
+Node current = head;
+while (current != null) {
+    if (current.data == 20) {
+        current.data = 99; // update
+        break;
+    }
+    current = current.next;
+}
+```
+
+### 6. CRUD-style linked list workflow
+
+```java
+head = new Node(10);          // create
+head.next = new Node(20);
+Node current = head;
+while (current != null) {
+    System.out.println(current.data); // read
+    current = current.next;
+}
+```
+
+## Engineer checklist
+
+- Know how to insert, delete, traverse, search, and update nodes
+- Understand the difference between linked lists and arrays for insertion/removal
+- Be able to explain singly linked vs doubly linked list behavior
+
+## Time and space complexity
+
+| Operation | Time | Space |
+|-----------|------|-------|
+| Insert at head | O(1) | O(1) |
+| Insert at tail | O(n) | O(1) |
+| Delete by value | O(n) | O(1) |
+| Search | O(n) | O(1) |
+| Traverse | O(n) | O(1) |
 
 ## Files
 

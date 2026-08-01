@@ -1,14 +1,11 @@
 # Exception Handling
 
-## Time and space complexity
-- The example uses simple operations whose running time depends on the input size.
-- Extra space is usually constant unless the code builds additional collections or strings.
-Exception handling is the mechanism Java provides to respond to runtime errors without crashing the whole application.
+Exception handling lets your Java program respond to errors without crashing unexpectedly. It is essential when reading input, parsing data, or dealing with user actions.
 
-## Core idea
-A method can signal an error using an exception. Calling code can either handle it or pass it further up.
+## How to create and use exceptions
 
-## Basic example
+### Basic try-catch-finally
+
 ```java
 try {
     int result = 10 / 0;
@@ -16,6 +13,26 @@ try {
     System.out.println("Cannot divide by zero");
 } finally {
     System.out.println("Cleanup code");
+}
+```
+
+### Throw your own exception
+
+```java
+public static void validateAge(int age) throws IllegalArgumentException {
+    if (age < 18) {
+        throw new IllegalArgumentException("Age must be 18 or above");
+    }
+}
+```
+
+### Create a custom exception
+
+```java
+class InvalidAgeException extends Exception {
+    InvalidAgeException(String message) {
+        super(message);
+    }
 }
 ```
 
@@ -33,20 +50,19 @@ try {
 - `NumberFormatException` - invalid numeric parsing
 - `IOException` - file and input/output problems
 
-## Custom exception example
-```java
-class InvalidAgeException extends Exception {
-    InvalidAgeException(String message) {
-        super(message);
-    }
-}
-```
-
 ## Best practices
 - Catch specific exceptions first.
 - Avoid swallowing exceptions silently.
 - Use exceptions for exceptional situations, not normal control flow.
 - Clean up resources in `finally` or use try-with-resources.
+
+## Time and space complexity
+
+| Operation | Time | Space |
+|-----------|------|-------|
+| `try` / `catch` block | O(1) | O(1) |
+| Throwing an exception | O(1) | O(1) |
+| Propagating exception stack | O(depth) | O(depth) |
 
 ## Interview notes
 - Checked exceptions must be handled or declared; unchecked exceptions usually extend `RuntimeException`.
