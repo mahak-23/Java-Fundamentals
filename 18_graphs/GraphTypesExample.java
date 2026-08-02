@@ -31,6 +31,8 @@ public class GraphTypesExample {
         }
 
         public int[] dijkstra(int source) {
+            // Dijkstra graph structure:
+            // 0 -> 1 (6), 0 -> 2 (7), 1 -> 2 (8), 1 -> 3 (5), 2 -> 3 (9), 2 -> 4 (14), 3 -> 4 (2)
             int n = adjacency.size();
             int[] dist = new int[n];
             Arrays.fill(dist, Integer.MAX_VALUE);
@@ -56,19 +58,60 @@ public class GraphTypesExample {
             }
             return dist;
         }
+
+        public int[] bellmanFord(int source) {
+            // Bellman-Ford graph structure (supports negative weights):
+            // 0 -> 1 (4), 0 -> 2 (2), 1 -> 2 (-3), 1 -> 3 (2), 2 -> 3 (1), 3 -> 1 (-1)
+            int n = adjacency.size();
+            int[] dist = new int[n];
+            Arrays.fill(dist, Integer.MAX_VALUE);
+            dist[source] = 0;
+
+            for (int i = 0; i < n - 1; i++) {
+                boolean updated = false;
+                for (int u = 0; u < n; u++) {
+                    if (dist[u] == Integer.MAX_VALUE) {
+                        continue;
+                    }
+                    for (Edge edge : adjacency.get(u)) {
+                        int nextDist = dist[u] + edge.weight;
+                        if (nextDist < dist[edge.to]) {
+                            dist[edge.to] = nextDist;
+                            updated = true;
+                        }
+                    }
+                }
+                if (!updated) {
+                    break;
+                }
+            }
+
+            return dist;
+        }
     }
 
     public static void main(String[] args) {
-        DirectedWeightedGraph graph = new DirectedWeightedGraph(5);
-        graph.addEdge(0, 1, 6);
-        graph.addEdge(0, 2, 7);
-        graph.addEdge(1, 2, 8);
-        graph.addEdge(1, 3, 5);
-        graph.addEdge(2, 3, 9);
-        graph.addEdge(2, 4, 14);
-        graph.addEdge(3, 4, 2);
+        DirectedWeightedGraph dijkstraGraph = new DirectedWeightedGraph(5);
+        dijkstraGraph.addEdge(0, 1, 6);
+        dijkstraGraph.addEdge(0, 2, 7);
+        dijkstraGraph.addEdge(1, 2, 8);
+        dijkstraGraph.addEdge(1, 3, 5);
+        dijkstraGraph.addEdge(2, 3, 9);
+        dijkstraGraph.addEdge(2, 4, 14);
+        dijkstraGraph.addEdge(3, 4, 2);
 
-        int[] dist = graph.dijkstra(0);
-        System.out.println("Shortest distances from source 0: " + Arrays.toString(dist));
+        int[] dijkstraDist = dijkstraGraph.dijkstra(0);
+        System.out.println("Shortest distances from source 0 (Dijkstra): " + Arrays.toString(dijkstraDist));
+
+        DirectedWeightedGraph bellmanFordGraph = new DirectedWeightedGraph(4);
+        bellmanFordGraph.addEdge(0, 1, 4);
+        bellmanFordGraph.addEdge(0, 2, 2);
+        bellmanFordGraph.addEdge(1, 2, -3);
+        bellmanFordGraph.addEdge(1, 3, 2);
+        bellmanFordGraph.addEdge(2, 3, 1);
+        bellmanFordGraph.addEdge(3, 1, -1);
+
+        int[] bellmanFordDist = bellmanFordGraph.bellmanFord(0);
+        System.out.println("Shortest distances from source 0 (Bellman-Ford): " + Arrays.toString(bellmanFordDist));
     }
 }

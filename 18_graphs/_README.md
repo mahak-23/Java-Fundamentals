@@ -59,21 +59,38 @@ Use Dijkstra for non-negative edge weights.
 - Time: O((V + E) log V) with a priority queue
 - Space: O(V + E)
 
+### Negative-weight shortest path
+
+Use Bellman-Ford when some edges can have negative weights.
+
+- Time: O(V × E)
+- Space: O(V)
+
+### Dijkstra vs Bellman-Ford
+
+| Algorithm    | Best for                                       | Handles negative weights? | Typical complexity |
+| ------------ | ---------------------------------------------- | ------------------------- | ------------------ |
+| BFS          | Unweighted graphs                              | No                        | O(V + E)           |
+| Dijkstra     | Weighted graphs with non-negative weights      | No                        | O((V + E) log V)   |
+| Bellman-Ford | Weighted graphs with possible negative weights | Yes                       | O(V × E)           |
+
+Bellman-Ford is slower than Dijkstra, but it is more general because it can detect negative cycles and still compute shortest paths when the graph is valid.
+
 ## Time and space complexity
 
-| Operation | Time | Space |
-|-----------|------|-------|
-| Add edge | O(1) | O(1) |
-| BFS | O(V + E) | O(V) |
-| DFS | O(V + E) | O(V) |
+| Operation | Time     | Space |
+| --------- | -------- | ----- |
+| Add edge  | O(1)     | O(1)  |
+| BFS       | O(V + E) | O(V)  |
+| DFS       | O(V + E) | O(V)  |
 
 Where $V$ is the number of vertices and $E$ is the number of edges.
 
 ## Example files
 
-| File | Focus |
-|------|-------|
-| `GraphExample.java` | Undirected graph traversal with BFS and DFS |
+| File                     | Focus                                              |
+| ------------------------ | -------------------------------------------------- |
+| `GraphExample.java`      | Undirected graph traversal with BFS and DFS        |
 | `GraphTypesExample.java` | Directed weighted graph and Dijkstra shortest path |
 
 ## Engineer checklist
