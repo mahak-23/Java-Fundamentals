@@ -27,11 +27,22 @@ List<List<Integer>> adjacencyList = new ArrayList<>();
 
 ### Minimum spanning tree (MST)
 
-An MST connects all vertices in a weighted undirected graph with the minimum possible total edge weight. It is useful for network design, cable layout, and clustering.
+An MST connects all vertices in a weighted undirected graph with the minimum possible total edge weight. It is useful for network design, cable layout, clustering, and any problem where you need a minimum-cost spanning structure.
 
-- Kruskal's algorithm sorts edges by weight and adds the smallest safe edge.
-- Prim's algorithm grows the tree from a starting vertex.
+- Kruskal's algorithm sorts all edges by weight and adds the smallest edge that does not form a cycle, using a union-find structure.
+- Prim's algorithm grows the MST from a starting vertex by repeatedly adding the cheapest edge that connects the current tree to a new vertex.
+- Both algorithms produce the same minimum spanning tree weight for connected, undirected graphs with non-negative weights.
 - MSTs are only defined for connected, undirected graphs.
+
+#### Prim vs Kruskal
+
+| Feature        | Prim's                                          | Kruskal's                                               |
+| -------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| Graph input    | Better for adjacency list representation        | Better for edge list representation                     |
+| Strategy       | Grows one tree from a starting vertex           | Merges components using smallest edges                  |
+| Edge selection | Chooses minimum outgoing edge from current tree | Chooses smallest global edge that does not form a cycle |
+| Data structure | Min-heap / priority queue, visited set          | Union-find / disjoint sets                              |
+| Best use case  | Dense graphs or adjacency list form             | Sparse graphs or when edges are easy to sort            |
 
 ### Topological sort
 
@@ -105,10 +116,11 @@ Where $V$ is the number of vertices and $E$ is the number of edges.
 
 ## Example files
 
-| File                     | Focus                                              |
-| ------------------------ | -------------------------------------------------- |
-| `GraphExample.java`      | Undirected graph traversal with BFS and DFS        |
-| `GraphTypesExample.java` | Directed weighted graph and Dijkstra shortest path |
+| File                                | Focus                                              |
+| ----------------------------------- | -------------------------------------------------- |
+| `GraphExample.java`                 | Undirected graph traversal with BFS and DFS        |
+| `GraphTypesExample.java`            | Directed weighted graph and Dijkstra shortest path |
+| `MSTAndTopologicalSortExample.java` | Kruskal's MST and topological sort examples        |
 
 ## Engineer checklist
 
