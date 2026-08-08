@@ -1,6 +1,6 @@
 # Java Fundamentals Workspace
 
-A comprehensive, hands-on Java learning repository for **beginner-to-intermediate developers**. It covers core Java syntax, object-oriented programming, collections, graphs, greedy algorithms, dynamic programming, and interview-focused notes.
+A comprehensive, hands-on Java learning repository for **beginner-to-intermediate developers**. It covers core Java syntax, object-oriented programming, collections, graphs, greedy algorithms, dynamic programming, bit manipulation, and interview-focused notes.
 
 Folders are **numbered in learning order** (`01_`, `02_`, …). Each folder contains a [`_README.md`](01_java_basics/_README.md) with theory, examples, and quick reference. Java **package names** match topics without numbers (`java_basics`, `arrays`, `stack`) because packages cannot start with a digit.
 
@@ -10,7 +10,7 @@ Folders are **numbered in learning order** (`01_`, `02_`, …). Each folder cont
 | ------------------- | --------------------------------------------------------------------------------------- | --------------------- |
 | **Basics**          | Variables, loops, methods, control flow                                                 | Beginner              |
 | **Data Structures** | Arrays, strings, linked lists, stacks, queues, hash tables, trees, heaps, tries, graphs | Intermediate          |
-| **Algorithms**      | Binary search, BFS/DFS, dynamic programming, greedy strategies, graph shortest path     | Intermediate          |
+| **Algorithms**      | Binary search, BFS/DFS, dynamic programming, greedy strategies, bit manipulation, graph shortest path | Intermediate          |
 | **OOP**             | Classes, inheritance, polymorphism, encapsulation, interfaces                           | Beginner–Intermediate |
 | **Collections**     | List, Set, Map implementations and operations                                           | Intermediate          |
 | **Advanced**        | Streams, lambdas, regex, JVM concepts, concurrency, JDBC, design patterns               | Intermediate          |
@@ -39,11 +39,12 @@ Folders are **numbered in learning order** (`01_`, `02_`, …). Each folder cont
 | 17  | [tries](17_tries/)                                                         | Trie insert/search/prefix matching                               | Intermediate          | TrieExample                                                                                                                                   |
 | 18  | [graphs](18_graphs/)                                                       | Graph traversal and adjacency-list design                        | Intermediate          | GraphExample, GraphTypesExample                                                                                                               |
 | 19  | [dynamic_programming](19_dynamic_programming/)                             | Fibonacci and knapsack patterns                                  | Intermediate          | DynamicProgrammingExample                                                                                                                     |
-| 20  | [algorithms_and_patterns](20_algorithms_and_patterns/)                     | Binary search, Kadane, two pointers, sliding window, BFS/DFS, DP | Intermediate          | ArraysAndStringsAlgorithms, LinkedListAndStackQueueAlgorithms, HashingAndHeapAlgorithms, TreeAndGraphAlgorithms, DynamicProgrammingAlgorithms |
-| 21  | [greedy_algorithms](21_greedy_algorithms/)                                 | Activity selection, fractional knapsack                          | Intermediate          | GreedyAlgorithmsExample                                                                                                                       |
-| 22  | [concurrency_and_multithreading](22_concurrency_and_multithreading/)       | Thread safety, synchronization, executors                        | Intermediate          | ConcurrencyExample                                                                                                                            |
-| 23  | [jdbc_and_database_basics](23_jdbc_and_database_basics/)                   | JDBC, PreparedStatement, queries                                 | Intermediate          | JDBCExample, JDBCPreparedStatementExample                                                                                                     |
-| 24  | [design_patterns_and_system_design](24_design_patterns_and_system_design/) | Strategy pattern, factory mindset, scalability basics            | Intermediate          | DesignPatternsExample, FactoryPatternExample                                                                                                  |
+| 20  | [bit_manipulation](20_bit_manipulation/)                                   | Bitwise operators, masks, XOR tricks                             | Intermediate          | BitManipulationExample                                                                                                                         |
+| 21  | [algorithms_and_patterns](21_algorithms_and_patterns/)                     | Binary search, Kadane, two pointers, sliding window, BFS/DFS, DP | Intermediate          | ArraysAndStringsAlgorithms, LinkedListAndStackQueueAlgorithms, HashingAndHeapAlgorithms, TreeAndGraphAlgorithms, DynamicProgrammingAlgorithms |
+| 22  | [greedy_algorithms](22_greedy_algorithms/)                                 | Activity selection, fractional knapsack                          | Intermediate          | GreedyAlgorithmsExample                                                                                                                       |
+| 23  | [concurrency_and_multithreading](23_concurrency_and_multithreading/)       | Thread safety, synchronization, executors                        | Intermediate          | ConcurrencyExample                                                                                                                            |
+| 24  | [jdbc_and_database_basics](24_jdbc_and_database_basics/)                   | JDBC, PreparedStatement, queries                                 | Intermediate          | JDBCExample, JDBCPreparedStatementExample                                                                                                     |
+| 25  | [design_patterns_and_system_design](25_design_patterns_and_system_design/) | Strategy pattern, factory mindset, scalability basics            | Intermediate          | DesignPatternsExample, FactoryPatternExample                                                                                                  |
 
 ## 📖 Complexity Notes
 
@@ -58,8 +59,7 @@ Folders are **numbered in learning order** (`01_`, `02_`, …). Each folder cont
 - Unweighted shortest path: BFS O(V + E)
 - Weighted shortest path: Dijkstra O((V + E) log V)
 - Greedy algorithms: often O(n log n) when sorting is required, or O(n) for linear scans
-- Dynamic programming: depends on the problem, often O(n × W) or O(n^2)
-
+- Dynamic programming: depends on the problem, often O(n × W) or O(n^2)- Bit manipulation: bitwise operations are typically O(1) per operation
 ## 📖 Repository Organization
 
 Each folder follows this structure:
@@ -110,6 +110,7 @@ Before your interview, master these:
 - [ ] Hash tables: two-sum, duplicate detection
 - [ ] Graphs: BFS/DFS, connectivity, directed vs undirected, weighted shortest path
 - [ ] Dynamic programming: memoization, tabulation, knapsack, Fibonacci optimization
+- [ ] Bit manipulation: masks, powers of two, XOR tricks, bitwise flags
 - [ ] Greedy algorithms: activity selection, fractional knapsack, interval scheduling
 
 ### Problem-Solving Strategy
@@ -152,8 +153,9 @@ Before your interview, master these:
 | Heap / priority queue                 | [heaps](16_heaps/HeapExample.java)                                                   | Top-k selection, median maintenance                | K largest elements, priority scheduling            |
 | Graph BFS/DFS                         | [graphs](18_graphs/GraphExample.java)                                                | Connectivity and traversal in adjacency lists      | Shortest path in unweighted graph, cycle detection |
 | Directed weighted shortest path       | [graphs](18_graphs/GraphTypesExample.java)                                           | Dijkstra with non-negative weights                 | Minimum distance, route planning                   |
-| Greedy strategy                       | [greedy_algorithms](21_greedy_algorithms/GreedyAlgorithmsExample.java)               | Local optimum choices for global optimum           | Activity selection, fractional knapsack            |
+| Greedy strategy                       | [greedy_algorithms](22_greedy_algorithms/GreedyAlgorithmsExample.java)               | Local optimum choices for global optimum           | Activity selection, fractional knapsack            |
 | Dynamic programming                   | [dynamic_programming](19_dynamic_programming/DynamicProgrammingExample.java)         | Memoization/tabulation for overlapping subproblems | Knapsack, Fibonacci, coin change                   |
+| Bit manipulation                      | [bit_manipulation](20_bit_manipulation/BitManipulationExample.java)                 | Bitwise masks, XOR, shifting                      | Power of two, set/clear bits, missing number      |
 | OOP four pillars                      | [oops](02_oops/OOPConcepts.java)                                                     | Encapsulation, inheritance, polymorphism           | Override vs overload                               |
 | Interface vs abstract class           | [interfaces](11_interfaces/InterfacesExample.java)                                   | Contract vs partial implementation                 | Design choice questions                            |
 | Streams + Collectors                  | [streams_and_lambdas](12_streams_and_lambdas/AdvancedStreamsExample.java)            | filter, map, collect, groupingBy                   | Data transformation pipelines                      |

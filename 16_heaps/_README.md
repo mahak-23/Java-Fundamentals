@@ -62,8 +62,16 @@ minHeap.poll();        // delete
 | Poll / remove root | O(log n) | O(1) |
 | Remove arbitrary element | O(n) | O(1) |
 
+## Heaps vs balanced trees
+
+- A heap is optimized for finding the minimum or maximum element quickly.
+- A balanced tree is optimized for ordered lookup, insertion, and deletion.
+- Use a heap for priority scheduling and top-k problems.
+- Use a balanced tree when you need sorted traversal and fast ordered operations.
+
 ## Engineer checklist
 
 - Know the difference between min-heap and max-heap
 - Understand `offer`, `poll`, `peek`, and `remove`
 - Be able to explain why heaps are useful for priority queues and top-k problems
+- Know when a balanced tree is preferable to a heap

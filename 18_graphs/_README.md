@@ -23,6 +23,23 @@ List<List<Integer>> adjacencyList = new ArrayList<>();
 - Use an adjacency matrix for dense graphs: O(V^2) space.
 - For weighted graphs, store pairs `(neighbor, weight)` in each adjacency list entry.
 
+## MST and topological sort
+
+### Minimum spanning tree (MST)
+
+An MST connects all vertices in a weighted undirected graph with the minimum possible total edge weight. It is useful for network design, cable layout, and clustering.
+
+- Kruskal's algorithm sorts edges by weight and adds the smallest safe edge.
+- Prim's algorithm grows the tree from a starting vertex.
+- MSTs are only defined for connected, undirected graphs.
+
+### Topological sort
+
+A topological sort orders the vertices of a directed acyclic graph (DAG) such that every edge goes from earlier to later in the ordering. It is commonly used for task scheduling and dependency resolution.
+
+- Use Kahn's algorithm with a queue of zero-indegree nodes.
+- A cycle means no valid topological ordering exists.
+
 ## Common operations
 
 ### Add an edge

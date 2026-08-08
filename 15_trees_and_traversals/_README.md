@@ -23,6 +23,23 @@ Trees are hierarchical data structures used for organization, search, and traver
 4. AVL trees rebalance themselves to keep height low.
 5. Morris traversal visits nodes without using a stack or recursion.
 
+## Heaps and balanced trees
+
+### Heaps
+
+A heap is a complete binary tree that keeps either the minimum or the maximum element at the root. It is commonly used for priority queues, scheduling, and top-k problems.
+
+- Min-heap: smallest value at the root
+- Max-heap: largest value at the root
+- Insert and remove operations take $O(\log n)$ time
+
+### Balanced trees
+
+Balanced trees keep the tree height small so operations stay efficient. AVL trees and Red-Black trees are classic examples.
+
+- Search, insert, and delete are typically $O(\log n)$
+- They prevent worst-case skewing that would make a normal binary tree behave like a linked list
+
 ## Time and space complexity
 
 | Structure | Operation | Time | Space |
