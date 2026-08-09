@@ -10,7 +10,9 @@ public class MSTAndTopologicalSortExample {
                 new Edge(2, 3, 5)
         );
 
-        System.out.println("MST total weight (Kruskal): " + kruskalMST(edges, 4));
+        System.out.println("MST total weight (Kruskal - array): " + kruskalMSTArray(edges, 4));
+        System.out.println("MST total weight (Kruskal - DSU rank): " + kruskalMST(edges, 4));
+        System.out.println("MST total weight (Kruskal - DSU size): " + kruskalMSTBySize(edges, 4));
         System.out.println("MST total weight (Prim): " + primMST(edges, 4));
 
         Map<Integer, List<Integer>> graph = new HashMap<>();
@@ -22,37 +24,7 @@ public class MSTAndTopologicalSortExample {
         System.out.println("Topological order (BFS / Kahn): " + topologicalSortBFS(graph));
         System.out.println("Topological order (DFS): " + topologicalSortDFS(graph));
     }
-
-    public static int kruskalMST(List<Edge> edges, int vertices) {
-        // Step 1: Sort edges by ascending weight.
-        edges.sort(Comparator.comparingInt(e -> e.weight));
-
-        // Step 2: Initialize union-find parent links so each node is its own set.
-        int[] parent = new int[vertices];
-        for (int i = 0; i < vertices; i++) {
-            parent[i] = i;
-        }
-
-        int totalWeight = 0;
-        int count = 0;
-
-        // Step 3: Iterate over sorted edges and add the safest edge.
-        for (Edge edge : edges) {
-            if (find(parent, edge.from) != find(parent, edge.to)) {
-                // Edge connects two different components, so include it in the MST.
-                union(parent, edge.from, edge.to);
-                totalWeight += edge.weight;
-                count++;
-                if (count == vertices - 1) {
-                    // MST is complete once it has exactly V-1 edges.
-                    break;
-                }
-            }
-        }
-
-        return totalWeight;
-    }
-
+    
     public static int primMST(List<Edge> edges, int vertices) {
         // Convert edge list to an adjacency list for Prim's algorithm.
         List<List<int[]>> adj = new ArrayList<>();
@@ -96,20 +68,178 @@ public class MSTAndTopologicalSortExample {
 
         return totalWeight;
     }
+    
+    public static int kruskalMST(List<Edge> edges, int vertices) {
+        // Step 1: Sort edges by ascending weight.
+        edges.sort(Comparator.comparingInt(e -> e.weight));
 
-    private static int find(int[] parent, int node) {
+        // Step 2: Initialize Disjoint Set (DSU) to manage components efficiently.
+        // DSU supports `find` with path compression and `union` by rank.
+        DisjointSet dsu = new DisjointSet(vertices);
+
+        int totalWeight = 0;
+        int count = 0;
+
+        // Step 3: Iterate over sorted edges and add the safest edge.
+        for (Edge edge : edges) {
+            int aRoot = dsu.find(edge.from);
+            int bRoot = dsu.find(edge.to);
+            if (aRoot != bRoot) {
+                // Edge connects two different components, so include it in the MST.
+                dsu.union(aRoot, bRoot);
+                totalWeight += edge.weight;
+                count++;
+                if (count == vertices - 1) {
+                    // MST is complete once it has exactly V-1 edges.
+                    break;
+                }
+            }
+        }
+
+        return totalWeight;
+    }
+
+    // Original array-based Kruskal (no union-by-rank) kept as a separate function
+    public static int kruskalMSTArray(List<Edge> edges, int vertices) {
+        // Step 1: Sort edges by ascending weight.
+        edges.sort(Comparator.comparingInt(e -> e.weight));
+
+        // Step 2: Initialize parent links so each node is its own set.
+        int[] parent = new int[vertices];
+        for (int i = 0; i < vertices; i++) {
+            parent[i] = i;
+        }
+
+        int totalWeight = 0;
+        int count = 0;
+
+        // Step 3: Iterate over sorted edges and add the safest edge.
+        for (Edge edge : edges) {
+            if (findParent(parent, edge.from) != findParent(parent, edge.to)) {
+                // Edge connects two different components, so include it in the MST.
+                unionParent(parent, edge.from, edge.to);
+                totalWeight += edge.weight;
+                count++;
+                if (count == vertices - 1) {
+                    break;
+                }
+            }
+        }
+
+        return totalWeight;
+    }
+
+    // Simple find with path compression (array-based helper)
+    private static int findParent(int[] parent, int node) {
         if (parent[node] != node) {
-            parent[node] = find(parent, parent[node]);
+            parent[node] = findParent(parent, parent[node]);
         }
         return parent[node];
     }
 
-    private static void union(int[] parent, int a, int b) {
-        int rootA = find(parent, a);
-        int rootB = find(parent, b);
+    // Simple union (attach root of a to root of b) — no rank optimization.
+    private static void unionParent(int[] parent, int a, int b) {
+        int rootA = findParent(parent, a);
+        int rootB = findParent(parent, b);
         if (rootA != rootB) {
             parent[rootA] = rootB;
         }
+    }
+
+    // Disjoint Set (Union-Find) with path compression and union by rank.
+    // - `find(x)` returns the representative (root) of x's component.
+    // - `union(x, y)` merges two components; union by rank keeps tree shallow.
+    static class DisjointSet {
+        private final int[] parent;
+        private final int[] rank;
+
+        DisjointSet(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+                rank[i] = 0;
+            }
+        }
+
+        // Path compression: flattens the tree so future finds are faster.
+        int find(int x) {
+            if (parent[x] != x) {
+                parent[x] = find(parent[x]);
+            }
+            return parent[x];
+        }
+
+        // Union by rank: attach the smaller tree under the larger one.
+        void union(int x, int y) {
+            int rx = find(x);
+            int ry = find(y);
+            if (rx == ry) return;
+            if (rank[rx] < rank[ry]) {
+                parent[rx] = ry;
+            } else if (rank[ry] < rank[rx]) {
+                parent[ry] = rx;
+            } else {
+                parent[ry] = rx;
+                rank[rx]++;
+            }
+        }
+    }
+
+    // Disjoint Set variant that uses union by size instead of rank.
+    static class DisjointSetBySize {
+        private final int[] parent;
+        private final int[] size;
+
+        DisjointSetBySize(int n) {
+            parent = new int[n];
+            size = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+                size[i] = 1;
+            }
+        }
+
+        int find(int x) {
+            if (parent[x] != x) {
+                parent[x] = find(parent[x]);
+            }
+            return parent[x];
+        }
+
+        void union(int x, int y) {
+            int rx = find(x);
+            int ry = find(y);
+            if (rx == ry) return;
+            // Attach smaller tree under the larger one by size.
+            if (size[rx] < size[ry]) {
+                parent[rx] = ry;
+                size[ry] += size[rx];
+            } else {
+                parent[ry] = rx;
+                size[rx] += size[ry];
+            }
+        }
+    }
+
+    // Kruskal using union-by-size DSU
+    public static int kruskalMSTBySize(List<Edge> edges, int vertices) {
+        edges.sort(Comparator.comparingInt(e -> e.weight));
+        DisjointSetBySize dsu = new DisjointSetBySize(vertices);
+
+        int totalWeight = 0;
+        int count = 0;
+        for (Edge edge : edges) {
+            int aRoot = dsu.find(edge.from);
+            int bRoot = dsu.find(edge.to);
+            if (aRoot != bRoot) {
+                dsu.union(aRoot, bRoot);
+                totalWeight += edge.weight;
+                count++;
+                if (count == vertices - 1) break;
+            }
+        }
+        return totalWeight;
     }
 
     public static List<Integer> topologicalSortBFS(Map<Integer, List<Integer>> graph) {

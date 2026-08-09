@@ -31,6 +31,8 @@ An MST connects all vertices in a weighted undirected graph with the minimum pos
 
 - Kruskal's algorithm sorts all edges by weight and adds the smallest edge that does not form a cycle, using a union-find structure.
 - Prim's algorithm grows the MST from a starting vertex by repeatedly adding the cheapest edge that connects the current tree to a new vertex.
+- In Prim's algorithm, edge candidates are ordered by weight in a priority queue so the next smallest crossing edge is selected.
+- In Kruskal's algorithm, union-find should use path compression and union by rank or size so edge merges stay efficient.
 - Both algorithms produce the same minimum spanning tree weight for connected, undirected graphs with non-negative weights.
 - MSTs are only defined for connected, undirected graphs.
 
@@ -43,6 +45,24 @@ An MST connects all vertices in a weighted undirected graph with the minimum pos
 | Edge selection | Chooses minimum outgoing edge from current tree | Chooses smallest global edge that does not form a cycle |
 | Data structure | Min-heap / priority queue, visited set          | Union-find / disjoint sets                              |
 | Best use case  | Dense graphs or adjacency list form             | Sparse graphs or when edges are easy to sort            |
+
+### Union-find optimizations for Kruskal
+
+Kruskal's algorithm uses a disjoint-set data structure to keep track of components.
+
+- `find()` locates the component root for a vertex.
+- `union()` merges two components when an edge connects them.
+- Use **path compression** in `find()` so nodes point directly to their root.
+- Use **union by rank or size** in `union()` so the smaller tree attaches to the larger tree.
+- These heuristics keep union-find operations nearly constant time, typically $O(\alpha(n))$.
+
+#### Union by Rank vs Union by Size
+
+- **Union by rank**: each root stores an approximate tree height (rank). When merging two roots, attach the shorter tree under the taller one. If ranks are equal, attach one under the other and increment the resulting root's rank. Rank keeps the tree height small.
+
+- **Union by size**: each root stores the size (number of elements) in its tree. When merging, attach the smaller tree under the larger tree and update the size. This keeps the resulting tree balanced by node count.
+
+Both strategies achieve near-constant amortized cost when combined with path compression. In practice, union-by-size is slightly simpler to reason about, while union-by-rank can be marginally faster in some implementations; both are good choices.
 
 ### Topological sort
 
