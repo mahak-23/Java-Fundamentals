@@ -1,3 +1,30 @@
+package dynamic_programming;
+
+/*
+ * =============================================================================
+ * Dynamic Programming — Fibonacci and 0/1 Knapsack
+ * =============================================================================
+ *
+ * WHAT IS DP?
+ *   Break a problem into overlapping subproblems. Store results so you never
+ *   recompute the same subproblem twice.
+ *
+ * TWO STYLES
+ *   Top-down (memoization): recursive + cache (memo array)
+ *   Bottom-up (tabulation):   fill a table from smaller to larger subproblems
+ *
+ * FIBONACCI EXAMPLE  fib(7):
+ *   Naive recursion recalculates fib(5), fib(4)... many times → O(2^n)
+ *   DP stores fib(i) once → O(n)
+ *
+ * 0/1 KNAPSACK EXAMPLE  weights=[1,3,4,5], values=[1,4,5,7], capacity=7
+ *   dp[i][w] = max value using first i items with capacity w
+ *   Answer: dp[n][capacity] = 9 (items with weight 3 and 4)
+ *
+ * COMPLEXITY:  Fibonacci O(n), Knapsack O(n × W)
+ * =============================================================================
+ */
+
 public class DynamicProgrammingExample {
     // Bottom-up (tabulation) Fibonacci — O(n) time, O(n) space
     public static int fibonacciTab(int n) {

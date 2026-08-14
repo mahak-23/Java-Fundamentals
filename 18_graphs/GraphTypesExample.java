@@ -1,5 +1,35 @@
 package graphs;
 
+/*
+ * =============================================================================
+ * Weighted Graph Shortest Path — Dijkstra and Bellman-Ford
+ * =============================================================================
+ *
+ * DIJKSTRA
+ *   Problem: shortest path from ONE source when all edge weights are >= 0
+ *   Idea: always pick the unvisited node with smallest known distance (greedy)
+ *   Uses: priority queue (min-heap)
+ *   Time: O((V + E) log V)
+ *
+ * BELLMAN-FORD
+ *   Problem: shortest path from ONE source; CAN handle negative edge weights
+ *   Idea: relax all edges V-1 times (repeat "can we improve any distance?")
+ *   Time: O(V × E) — slower but more general
+ *
+ * EXAMPLE (Dijkstra graph)
+ *   0 --6--> 1 --5--> 3 --2--> 4
+ *   |        |        ^
+ *   7        8        |
+ *   v        v        9
+ *   2 ------> (2 to 3)
+ *
+ *   Shortest from 0: dist = [0, 6, 7, 11, 13]
+ *
+ * RUN FLOW
+ *   main() → build graph → dijkstra(0) → bellmanFord(0) on second graph
+ * =============================================================================
+ */
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,8 +61,6 @@ public class GraphTypesExample {
         }
 
         public int[] dijkstra(int source) {
-            // Dijkstra graph structure:
-            // 0 -> 1 (6), 0 -> 2 (7), 1 -> 2 (8), 1 -> 3 (5), 2 -> 3 (9), 2 -> 4 (14), 3 -> 4 (2)
             int n = adjacency.size();
             int[] dist = new int[n];
             Arrays.fill(dist, Integer.MAX_VALUE);
@@ -48,11 +76,10 @@ public class GraphTypesExample {
                     continue;
                 }
                 for (Edge edge : adjacency.get(node)) {
-                    int next = edge.to;
                     int nextDist = distance + edge.weight;
-                    if (nextDist < dist[next]) {
-                        dist[next] = nextDist;
-                        pq.offer(new int[]{next, nextDist});
+                    if (nextDist < dist[edge.to]) {
+                        dist[edge.to] = nextDist;
+                        pq.offer(new int[]{edge.to, nextDist});
                     }
                 }
             }
@@ -60,8 +87,6 @@ public class GraphTypesExample {
         }
 
         public int[] bellmanFord(int source) {
-            // Bellman-Ford graph structure (supports negative weights):
-            // 0 -> 1 (4), 0 -> 2 (2), 1 -> 2 (-3), 1 -> 3 (2), 2 -> 3 (1), 3 -> 1 (-1)
             int n = adjacency.size();
             int[] dist = new int[n];
             Arrays.fill(dist, Integer.MAX_VALUE);
@@ -85,7 +110,6 @@ public class GraphTypesExample {
                     break;
                 }
             }
-
             return dist;
         }
     }
@@ -101,7 +125,7 @@ public class GraphTypesExample {
         dijkstraGraph.addEdge(3, 4, 2);
 
         int[] dijkstraDist = dijkstraGraph.dijkstra(0);
-        System.out.println("Shortest distances from source 0 (Dijkstra): " + Arrays.toString(dijkstraDist));
+        System.out.println("Dijkstra from 0: " + Arrays.toString(dijkstraDist));
 
         DirectedWeightedGraph bellmanFordGraph = new DirectedWeightedGraph(4);
         bellmanFordGraph.addEdge(0, 1, 4);
@@ -112,6 +136,6 @@ public class GraphTypesExample {
         bellmanFordGraph.addEdge(3, 1, -1);
 
         int[] bellmanFordDist = bellmanFordGraph.bellmanFord(0);
-        System.out.println("Shortest distances from source 0 (Bellman-Ford): " + Arrays.toString(bellmanFordDist));
+        System.out.println("Bellman-Ford from 0: " + Arrays.toString(bellmanFordDist));
     }
 }

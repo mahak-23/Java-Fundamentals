@@ -2,13 +2,25 @@
 
 ## About
 
-Graphs model relationships between objects using vertices and edges. They are used for social networks, maps, routing, dependency analysis, and search problems.
+Graphs model relationships between vertices (nodes) and edges (connections).
+They are used for social networks, maps, routing, dependency analysis, and search problems.
 
 ## How to create a graph in Java
 
 ```java
 List<List<Integer>> adjacencyList = new ArrayList<>();
 ```
+
+Read each `.java` file — the header comment explains the algorithm, example, and run flow.
+
+## Files
+
+| File                                | Algorithm                       | Beginner idea                                     | Time                   |
+| ----------------------------------- | ------------------------------- | ------------------------------------------------- | ---------------------- |
+| `GraphExample.java`                 | BFS, DFS                        | Queue = level-by-level; recursion = go deep first | O(V + E)               |
+| `GraphTypesExample.java`            | Dijkstra, Bellman-Ford          | Shortest path from one source                     | O((V+E) log V), O(V×E) |
+| `FloydWarshallExample.java`         | Floyd-Warshall                  | Shortest path between **all pairs**               | O(V³)                  |
+| `MSTAndTopologicalSortExample.java` | Kruskal, Prim, topological sort | Minimum spanning tree; task ordering in DAG       | O(E log E), O(V+E)     |
 
 ## Graph types
 
@@ -17,13 +29,51 @@ List<List<Integer>> adjacencyList = new ArrayList<>();
 - **Unweighted graph**: edges are equal and only connectivity matters.
 - **Weighted graph**: each edge stores a weight, such as distance or cost.
 
+## Graph basics
+
+- **Vertex (node)** — an entity (city, user, task)
+- **Edge** — a connection between two vertices
+- **Undirected** — edge works both ways
+- **Directed** — edge has a direction (A → B)
+- **Weighted** — edge has a cost (distance, time)
+
 ### Representation choices
 
 - Use an adjacency list for sparse graphs: O(V + E) space.
 - Use an adjacency matrix for dense graphs: O(V^2) space.
 - For weighted graphs, store pairs `(neighbor, weight)` in each adjacency list entry.
 
+| Method           | Best for                        | Space    |
+| ---------------- | ------------------------------- | -------- |
+| Adjacency list   | Sparse graphs (most interviews) | O(V + E) |
+| Adjacency matrix | Dense graphs, Floyd-Warshall    | O(V²)    |
+
+## Shortest path — which algorithm?
+
+| Algorithm      | Use when                                 | Handles negative weights? |
+| -------------- | ---------------------------------------- | ------------------------- |
+| BFS            | Unweighted graph, one source             | No                        |
+| Dijkstra       | Weighted, non-negative, one source       | No                        |
+| Bellman-Ford   | Weighted, one source, may have negatives | Yes                       |
+| Floyd-Warshall | All pairs shortest path                  | Yes (no negative cycles)  |
+
+### Floyd-Warshall (beginner summary)
+
+Build a distance matrix `dist[i][j]`. For each intermediate vertex `k`, ask:
+
+> Is going from `i` to `j` through `k` shorter?
+
+```
+dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+```
+
+Repeat for every `k`. After all iterations, `dist[i][j]` holds the shortest path from `i` to `j`.
+
 ## MST and topological sort
+
+- **Kruskal** — sort edges, union-find to avoid cycles
+- **Prim** — min-heap picks next cheapest edge from growing tree
+- **Topological sort** — order tasks with dependencies (must be a DAG)
 
 ### Minimum spanning tree (MST)
 
@@ -149,3 +199,10 @@ Where $V$ is the number of vertices and $E$ is the number of edges.
 - Be able to explain shortest-path algorithms for directed and weighted graphs
 - Know the difference between directed and undirected graph representations
 - Understand when to use Dijkstra vs BFS for shortest path
+
+## Interview questions
+
+1. BFS vs DFS — when use each?
+2. Why can't Dijkstra handle negative weights?
+3. When use Floyd-Warshall instead of running Dijkstra from every vertex?
+4. What is a DAG and why does topological sort need one?

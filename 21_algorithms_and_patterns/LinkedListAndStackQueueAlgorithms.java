@@ -1,3 +1,9 @@
+package algorithms_and_patterns;
+
+/*
+ * Linked list, stack, queue: reverse list, cycle detection, valid parentheses, min stack.
+ */
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 

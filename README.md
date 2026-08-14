@@ -37,7 +37,7 @@ Folders are **numbered in learning order** (`01_`, `02_`, …). Each folder cont
 | 15  | [trees_and_traversals](15_trees_and_traversals/)                           | Trees, binary trees, BSTs, AVL trees, Morris traversal           | Intermediate          | TreeBasics, BinaryTreeExample, BinarySearchTreeExample, AVLTreeExample, MorrisTraversalExample                                                |
 | 16  | [heaps](16_heaps/)                                                         | Min-heaps and max-heaps, priority queue operations               | Intermediate          | HeapExample                                                                                                                                   |
 | 17  | [tries](17_tries/)                                                         | Trie insert/search/prefix matching                               | Intermediate          | TrieExample                                                                                                                                   |
-| 18  | [graphs](18_graphs/)                                                       | Graph traversal and adjacency-list design                        | Intermediate          | GraphExample, GraphTypesExample                                                                                                               |
+| 18  | [graphs](18_graphs/)                                                       | BFS, DFS, Dijkstra, Floyd-Warshall, MST, topological sort        | Intermediate          | GraphExample, GraphTypesExample, FloydWarshallExample, MSTAndTopologicalSortExample |
 | 19  | [dynamic_programming](19_dynamic_programming/)                             | Fibonacci and knapsack patterns                                  | Intermediate          | DynamicProgrammingExample                                                                                                                     |
 | 20  | [bit_manipulation](20_bit_manipulation/)                                   | Bitwise operators, masks, XOR tricks                             | Intermediate          | BitManipulationExample                                                                                                                         |
 | 21  | [algorithms_and_patterns](21_algorithms_and_patterns/)                     | Binary search, Kadane, two pointers, sliding window, BFS/DFS, DP | Intermediate          | ArraysAndStringsAlgorithms, LinkedListAndStackQueueAlgorithms, HashingAndHeapAlgorithms, TreeAndGraphAlgorithms, DynamicProgrammingAlgorithms |
@@ -57,7 +57,8 @@ Folders are **numbered in learning order** (`01_`, `02_`, …). Each folder cont
 - Trie: insert/search/prefix O(L)
 - Graph traversal: BFS/DFS O(V + E)
 - Unweighted shortest path: BFS O(V + E)
-- Weighted shortest path: Dijkstra O((V + E) log V)
+- Weighted shortest path (single source): Dijkstra O((V + E) log V)
+- All-pairs shortest path: Floyd-Warshall O(V³)
 - Greedy algorithms: often O(n log n) when sorting is required, or O(n) for linear scans
 - Dynamic programming: depends on the problem, often O(n × W) or O(n^2)- Bit manipulation: bitwise operations are typically O(1) per operation
 ## 📖 Repository Organization
@@ -152,7 +153,9 @@ Before your interview, master these:
 | Trie insert/search/prefix             | [tries](17_tries/TrieExample.java)                                                   | Character-by-character prefix search               | Autocomplete, prefix matching                      |
 | Heap / priority queue                 | [heaps](16_heaps/HeapExample.java)                                                   | Top-k selection, median maintenance                | K largest elements, priority scheduling            |
 | Graph BFS/DFS                         | [graphs](18_graphs/GraphExample.java)                                                | Connectivity and traversal in adjacency lists      | Shortest path in unweighted graph, cycle detection |
+| All-pairs shortest path               | [graphs](18_graphs/FloydWarshallExample.java)                                          | Try every vertex as intermediate stop              | Distance matrix, transitive closure                |
 | Directed weighted shortest path       | [graphs](18_graphs/GraphTypesExample.java)                                           | Dijkstra with non-negative weights                 | Minimum distance, route planning                   |
+| MST / topological sort                | [graphs](18_graphs/MSTAndTopologicalSortExample.java)                                | Kruskal, Prim, task ordering in DAG                | Network design, dependency scheduling              |
 | Greedy strategy                       | [greedy_algorithms](22_greedy_algorithms/GreedyAlgorithmsExample.java)               | Local optimum choices for global optimum           | Activity selection, fractional knapsack            |
 | Dynamic programming                   | [dynamic_programming](19_dynamic_programming/DynamicProgrammingExample.java)         | Memoization/tabulation for overlapping subproblems | Knapsack, Fibonacci, coin change                   |
 | Bit manipulation                      | [bit_manipulation](20_bit_manipulation/BitManipulationExample.java)                 | Bitwise masks, XOR, shifting                      | Power of two, set/clear bits, missing number      |

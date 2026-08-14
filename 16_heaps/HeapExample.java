@@ -1,5 +1,25 @@
 package heaps;
 
+/*
+ * =============================================================================
+ * Heap (Priority Queue) — Always Get Min or Max Fast
+ * =============================================================================
+ *
+ * IDEA
+ *   A complete binary tree where parent is always smaller (min-heap) or
+ *   larger (max-heap) than children. Root = min/max element.
+ *
+ * JAVA
+ *   PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+ *   PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a,b) -> b - a);
+ *
+ * USE CASES
+ *   Top-K elements, merge K sorted lists, Dijkstra, task scheduling
+ *
+ * COMPLEXITY:  offer/poll/peek → O(log n)
+ * =============================================================================
+ */
+
 import java.util.PriorityQueue;
 
 public class HeapExample {

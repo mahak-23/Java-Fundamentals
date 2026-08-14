@@ -1,3 +1,10 @@
+package algorithms_and_patterns;
+
+/*
+ * Arrays & Strings: binary search, two sum, Kadane, sliding window.
+ * See header in each method — O(log n), O(n) patterns for interviews.
+ */
+
 import java.util.HashMap;
 import java.util.Map;
 

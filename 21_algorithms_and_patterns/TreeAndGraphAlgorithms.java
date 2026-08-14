@@ -1,3 +1,9 @@
+package algorithms_and_patterns;
+
+/*
+ * Trees & graphs: max depth, diameter, level-order, BFS, DFS.
+ */
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.LinkedList;

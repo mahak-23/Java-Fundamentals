@@ -1,3 +1,30 @@
+package graphs;
+
+/*
+ * =============================================================================
+ * MST (Kruskal, Prim) and Topological Sort (Kahn BFS, DFS)
+ * =============================================================================
+ *
+ * MINIMUM SPANNING TREE (MST)
+ *   Connect all vertices with minimum total edge weight (undirected, weighted).
+ *   Kruskal: sort edges, add smallest that does not form a cycle (union-find).
+ *   Prim: grow tree from one vertex, always add cheapest outgoing edge (min-heap).
+ *
+ * TOPOLOGICAL SORT
+ *   Linear ordering of DAG vertices where every edge goes left → right.
+ *   Kahn (BFS): start with indegree-0 nodes, remove and update neighbors.
+ *   DFS: finish nodes in post-order, reverse for topological order.
+ *
+ * EXAMPLE MST edges: (0,1,4), (0,2,3), (1,2,1), (1,3,2), (2,3,5)
+ *   Kruskal/Prim pick: 1-2(1), 0-2(3), 1-3(2) → total weight 6
+ *
+ * EXAMPLE DAG: 0→1, 0→2, 1→3, 2→3  →  topological order: [0, 1, 2, 3]
+ *
+ * COMPLEXITY
+ *   Kruskal: O(E log E), Prim: O(E log V), Topological sort: O(V + E)
+ * =============================================================================
+ */
+
 import java.util.*;
 
 public class MSTAndTopologicalSortExample {

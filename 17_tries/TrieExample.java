@@ -1,5 +1,24 @@
 package tries;
 
+/*
+ * =============================================================================
+ * Trie (Prefix Tree) — Fast String Prefix Search
+ * =============================================================================
+ *
+ * IDEA
+ *   Each node has up to 26 children (a-z). Words sharing a prefix share a path.
+ *
+ * EXAMPLE  insert: "cat", "car", "card"
+ *   root → c → a → t (end)
+ *              → r (end) → d (end)
+ *
+ *   search("car")     → true
+ *   startsWith("ca")  → true
+ *
+ * COMPLEXITY:  insert/search/prefix → O(L) where L = word length
+ * =============================================================================
+ */
+
 public class TrieExample {
     static class TrieNode {
         TrieNode[] children = new TrieNode[26];

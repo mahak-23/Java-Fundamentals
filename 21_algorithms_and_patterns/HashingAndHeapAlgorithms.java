@@ -1,3 +1,9 @@
+package algorithms_and_patterns;
+
+/*
+ * Hashing & heaps: two sum, group anagrams, top-K frequent elements.
+ */
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

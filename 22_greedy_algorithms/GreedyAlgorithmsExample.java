@@ -1,5 +1,26 @@
 package greedy_algorithms;
 
+/*
+ * =============================================================================
+ * Greedy Algorithms — Local Best Choice
+ * =============================================================================
+ *
+ * IDEA
+ *   At each step, pick the option that looks best NOW. Works when local
+ *   optimum leads to global optimum (must prove or recognize the pattern).
+ *
+ * ACTIVITY SELECTION
+ *   Sort meetings by end time. Pick next meeting that starts after last ends.
+ *   Example: [(1,3), (2,5), (4,6)] → pick (1,3) and (4,6) → 2 meetings
+ *
+ * FRACTIONAL KNAPSACK
+ *   Sort items by value/weight ratio. Take highest ratio first (can take fractions).
+ *   Example: items (value/weight): (60/10=6), (100/20=5), (120/30=4)
+ *
+ * COMPLEXITY:  Usually O(n log n) due to sorting
+ * =============================================================================
+ */
+
 import java.util.Arrays;
 
 public class GreedyAlgorithmsExample {

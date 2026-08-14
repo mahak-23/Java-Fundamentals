@@ -1,3 +1,9 @@
+package algorithms_and_patterns;
+
+/*
+ * Dynamic programming: Fibonacci, climbing stairs, coin change, LCS.
+ */
+
 public class DynamicProgrammingAlgorithms {
     public static int fibonacci(int n) {
         if (n <= 1) {

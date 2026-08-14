@@ -1,3 +1,24 @@
+package bit_manipulation;
+
+/*
+ * =============================================================================
+ * Bit Manipulation — Binary Tricks
+ * =============================================================================
+ *
+ * WHY BITS?
+ *   Compact flags, fast checks, and clever math using &, |, ^, <<, >>
+ *
+ * KEY TRICKS (value = 13 = 1101 binary)
+ *   isPowerOfTwo(n)     → n & (n-1) == 0  (only one bit set)
+ *   countSetBits(n)     → n &= (n-1) removes lowest set bit each loop
+ *   isBitSet(n, pos)    → (n >> pos) & 1
+ *   setBit / clearBit   → OR / AND with mask
+ *   swap with XOR       → a^=b; b^=a; a^=b (no temp variable)
+ *
+ * COMPLEXITY:  O(1) per bitwise operation, O(log n) for bit counting loops
+ * =============================================================================
+ */
+
 public class BitManipulationExample {
     public static void main(String[] args) {
         int value = 13; // 1101 in binary
