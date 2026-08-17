@@ -134,7 +134,7 @@ public class MSTAndTopologicalSortExample {
 
     // Step 2: Initialize Disjoint Set (DSU) to manage components efficiently.
     // DSU supports `find` with path compression and `union` by rank.
-    DisjointSet dsu = new DisjointSetByRank(vertices);
+    DisjointSetByRank dsu = new DisjointSetByRank(vertices);
 
     int totalWeight = 0;
     int count = 0;
@@ -261,19 +261,21 @@ public class MSTAndTopologicalSortExample {
   //---------------------------------------------------------------------------
   //---------------------------- Prims Algorithm ----------------------------
   //---------------------------------------------------------------------------
-  // Prim's algorithm uses a min-heap (priority queue) to always add the smallest outgoing edge from the growing MST.
+  // Prim's algorithm using a PriorityQueue (Min-Heap) to greedily grow the MST.
   public static int primMST(List<Edge> edges, int vertices) {
-    // Convert edge list to an adjacency list for Prim's algorithm.
+    // Step 1: Create an adjacency list optimized for tracking node neighbors and weights.
     List<List<int[]>> adj = new ArrayList<>();
     for (int i = 0; i < vertices; i++) {
       adj.add(new ArrayList<>());
     }
+    // Graph is treated as undirected for MST generation
     for (Edge edge : edges) {
       adj.get(edge.from).add(new int[] { edge.to, edge.weight });
       adj.get(edge.to).add(new int[] { edge.from, edge.weight });
     }
 
     boolean[] visited = new boolean[vertices];
+    // Step 2: Initialize trackers. Min-heap elements store [node_index, edge_weight].
     PriorityQueue<int[]> pq = new PriorityQueue<>(
       Comparator.comparingInt(a -> a[0])
     );
@@ -309,12 +311,9 @@ public class MSTAndTopologicalSortExample {
   }
 
   //---------------------------------------------------------------------------
-  // ---------------------------- Topological Sort ----------------------------
+  // -----------------------  Topological Sort (Kahn BFS) --------------------
   //---------------------------------------------------------------------------
-
-  // Topological sort using Kahn's algorithm (BFS) and DFS post-order traversal. Both methods assume the input graph is a Directed Acyclic Graph (DAG).
-
-  // --------------------------------Topological Sort (BFS / Kahn's Algorithm)--------------------------------
+  // Kahn's Algorithm uses in-degrees to sort a Directed Acyclic Graph (DAG).
   public static List<Integer> topologicalSortBFS(
     Map<Integer, List<Integer>> graph
   ) {
@@ -359,7 +358,10 @@ public class MSTAndTopologicalSortExample {
     return order;
   }
 
-  // --------------------------------Topological Sort (DFS / Post-order Traversal)--------------------------------
+  //---------------------------------------------------------------------------
+  // -----------------------  Topological Sort (DFS) -------------------------
+  ///---------------------------------------------------------------------------
+  // DFS-based Topological Sort finishes deeper nodes first, then reverses the layout.
   public static List<Integer> topologicalSortDFS(
     Map<Integer, List<Integer>> graph
   ) {

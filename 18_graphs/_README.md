@@ -192,6 +192,69 @@ Where $V$ is the number of vertices and $E$ is the number of edges.
 | `GraphTypesExample.java`            | Directed weighted graph and Dijkstra shortest path |
 | `MSTAndTopologicalSortExample.java` | Kruskal's MST and topological sort examples        |
 
+# Advanced Graph Algorithms Quick Reference Guide
+
+## 📊 Summary Reference Table
+
+| Problem                | Graph Type | Key Test Condition                                        | Time Complexity | Space Complexity |
+| :--------------------- | :--------- | :-------------------------------------------------------- | :-------------- | :--------------- |
+| **SCC (Tarjan)**       | Directed   | `low[u] == disc[u]` $\rightarrow$ Found SCC Root          | $O(V + E)$      | $O(V)$           |
+| **SCC (Kosaraju)**     | Directed   | Finish order Stack + Transpose Graph DFS                  | $O(V + E)$      | $O(V + E)$       |
+| **Bridge Finding**     | Undirected | `low[v] > disc[u]` $\rightarrow$ Critical Edge            | $O(V + E)$      | $O(V)$           |
+| **Articulation Point** | Undirected | `low[v] >= disc[u]` (or Root with >1 child)               | $O(V + E)$      | $O(V)$           |
+| **Bipartite Check**    | Undirected | Adjacent neighbor shares same color $\rightarrow$ `false` | $O(V + E)$      | $O(V)$           |
+
+---
+
+## 🔎 Full Advanced Graph Algorithms Comparison Matrix
+
+| Algorithm               | Best For                                                                                                                              | Key Structural Test / Strategy                                                                                                                                | Handles Weights?                                                          | Typical Complexity |
+| :---------------------- | :------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------ | :----------------- |
+| **Kosaraju's**          | Finding **Strongly Connected Components (SCCs)** in modular systems where clean code separation is favored over micro-optimizations.  | **2-Pass DFS**: Uses a finishing-time tracking stack on the original graph, reverses all edge directions, and executes a second focused DFS pass.             | **Yes** (Ignores weight values; evaluates structural reachability paths). | $O(V + E)$         |
+| **Tarjan's**            | Finding **Strongly Connected Components (SCCs)** in performance-critical, low-latency, or tight memory-constrained software setups.   | **1-Pass DFS**: Evaluates dynamic node identity states via `discovery` tracking clocks and tracking `low-link` node values alongside a member stack.          | **Yes** (Ignores weight values; evaluates structural reachability paths). | $O(V + E)$         |
+| **Bridge Finding**      | Finding **critical communication bottlenecks** or single-point-of-failure routing links across physical infrastructure networks.      | **DFS Edge Ancestry Check**: Looks for any child node branch where the backtracking traversal condition `low[v] > discovery[u]` holds true.                   | **Yes** (Ignores weights; evaluates fundamental structural connections).  | $O(V + E)$         |
+| **Articulation Points** | Finding **critical system core nodes** whose structural failure or elimination partitions a single connected network map.             | **DFS Vertex Splitting Check**: Validates if any downstream branch fulfills `low[v] >= disc[u]`, or checks if a root has multiple independent child subtrees. | **Yes** (Ignores weights; evaluates fundamental structural connections).  | $O(V + E)$         |
+| **Bipartite Check**     | Finding structural compatibilities, processing thread-safe scheduling layers, or verifying **two-way resource assignment matchings**. | **BFS / DFS 2-Coloring Loop**: Alternates coloring binary states between adjacent nodes; checks for odd-length cycle structural collisions.                   | **Yes** (Ignores weights; evaluates structural state graphs).             | $O(V + E)$         |
+
+---
+
+## 💡 Key Operational Differences: Kosaraju's vs. Tarjan's
+
+To understand why you would pick one approach over the other for a production pipeline, evaluate these architectural trade-offs:
+
+- **Pass Count and Memory I/O**: Kosaraju's algorithm requires a dedicated structural graph inversion pass to build the transpose graph. This allocations extra heap space and reads edges twice. Tarjan's algorithm executes completely within a single forward DFS pass.
+- **Execution Constants**: Because Tarjan's operates in a single pass without rebuilding internal adjacency structures mid-execution, it features smaller constants. This makes it faster for real-time applications.
+- **Code Modularity & Readability**: Kosaraju’s algorithm is much simpler to debug, read, and write because it separates responsibilities into two distinct, predictable standard DFS sub-routines. Tarjan's algorithm is slightly more complex because it combines topological tracking variables, state tables, and a specialized node isolation stack in a single recursive sweep.
+
+# Graph Theory Quiz: Answer Key
+
+## Q1 & Q2: Circular Dependencies & Bridges
+
+### Circular Dependency Detection
+
+- **Structure:** Strongly Connected Components (SCCs) or Directed Cycles.
+- **Algorithm:** **Tarjan's Algorithm** (or Path-based strong component algorithm) finds SCCs in a single DFS pass.
+
+### Bridge vs. Articulation Point Tests
+
+- **Bridge Test:** `low[v] > disc[u]`
+- **Articulation Point Test:** `low[v] >= disc[u]` (for non-root nodes).
+- **Difference:** A bridge requires strict inequality because the child `v` cannot even reach back to `u` via an alternative path. An articulation point allows `v` to reach back to `u`, but no higher.
+
+---
+
+## Q3: Splitting Nodes into Conflict-Free Groups
+
+- **Graph Property:** **Bipartite** (2-colorable).
+- **How to Check:** Run a **BFS** or **DFS** graph coloring algorithm. If you encounter an adjacent node already colored with the same color as the current node, the graph is not bipartite.
+
+---
+
+## Q4: Undirected DFS Parent Revisit
+
+- **Why Skip the Parent:** Undirected edges are bidirectional. DFS traverses from parent `u` to child `v`. Without a check, `v` sees the edge back to `u` as an available path.
+- **The Bug:** It causes a **false positive cycle detection**. The algorithm misidentifies the traversal path itself as a loop.
+
 ## Engineer checklist
 
 - Understand adjacency list vs adjacency matrix
