@@ -28,6 +28,17 @@
 //    - Rule: An edge (u, v) is a structural bridge if and only if: low[v] > discovery[u].
 //    - Meaning: Node v has absolutely no back-edge way to crawl back to u or higher up.
 //
+// disc = "When did I arrive here?"
+// low  = "How far back can I escape from here?"
+//
+// low[child] > disc[parent]
+//         ↓
+// child cannot escape back
+//         ↓
+// NO alternate path
+//         ↓
+//      BRIDGE
+
 // 4. ARTICULATION POINTS (Cut Vertices)
 //    - Purpose: Finds single point-of-failure vertices whose removal splits the graph.
 //    - Strategy: Modified DFS low-link tracking rules.
