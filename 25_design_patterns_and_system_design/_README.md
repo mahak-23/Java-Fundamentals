@@ -1,95 +1,184 @@
 # Design Patterns and System Design
 
-## What is this module?
+This module helps you think beyond coding syntax and into software architecture.
 
-This section introduces common Java design patterns and high-level system design concepts. It helps you think like an engineer when designing maintainable, flexible systems.
+It covers:
+- common design patterns
+- low-level design (LLD)
+- high-level design (HLD)
+- tradeoffs in scalability, performance, and reliability
 
-## Why it matters
+## Subtopics
 
-Design patterns provide reusable solutions to common software design problems. System design knowledge helps you evaluate architecture tradeoffs, scalability, and reliability.
+- [01_creational_patterns](01_creational_patterns/)
+- [02_structural_patterns](02_structural_patterns/)
+- [03_behavioral_patterns](03_behavioral_patterns/)
+- [04_low_level_design](04_low_level_design/)
+- [05_high_level_design](05_high_level_design/)
 
-## How to use this module
+## LLD vs HLD
 
-Read the pattern definitions, review the sample code, and practice describing when to use each pattern. Pair this module with the architecture concepts when thinking about larger applications.
+### Low-level design (LLD)
 
-## About
+LLD focuses on a feature or module.
 
-Real engineering work is not only about coding data structures. Java developers are expected to understand common design patterns and how to design scalable systems.
+Questions it answers:
+- What classes are needed?
+- What interfaces and methods exist?
+- How do entities and services interact?
+- What edge cases and validations are required?
 
-## What this example teaches
+Examples:
+- Parking Lot
+- Library Management System
+- Ride Sharing System
+- Splitwise clone
 
-This example demonstrates the Strategy pattern, which separates the algorithm from the client that uses it.
+### High-level design (HLD)
 
-## Why this matters
+HLD focuses on the overall system.
 
-Using design patterns makes code more modular, easier to extend, and simpler to maintain. The Strategy pattern is particularly useful when behavior should be swappable at runtime.
+Questions it answers:
+- What are the main components?
+- What database and cache choices are needed?
+- How do services communicate?
+- How do we handle scale, load, and failure?
 
-## How it works
+Examples:
+- URL shortener
+- Notification service
+- Chat system
+- E-commerce platform
 
-1. Define a `PaymentStrategy` interface with a `pay(int amount)` method.
-2. Implement different concrete strategies like `CreditCardPayment` and `PayPalPayment`.
-3. Create a `PaymentProcessor` that takes a `PaymentStrategy` in its constructor.
-4. Call `processor.process(amount)` to execute the selected payment behavior.
+## Core system-design concepts
 
-## Common design patterns
+### Functional requirements (FR)
 
-### Strategy pattern
+Functional requirements describe what the system must do.
 
-```java
-interface PaymentStrategy {
-    void pay(int amount);
-}
-```
+Examples:
+- create an order
+- send a message
+- fetch user profile
+- process payment
 
-### Factory pattern
+### Non-functional requirements (NFR)
 
-```java
-class VehicleFactory {
-    Vehicle create(String type) { ... }
-}
-```
+Non-functional requirements describe quality attributes of the system.
 
-### What these examples teach
+Examples:
+- availability
+- latency
+- scalability
+- reliability
+- security
+- consistency
+- fault tolerance
 
-- `DesignPatternsExample.java` shows the Strategy pattern, where behavior is passed into a processor.
-- `FactoryPatternExample.java` shows the Factory pattern, where object creation is centralized in one place.
+### CAP theorem
 
-### Why these patterns matter
+CAP says that in a distributed system, you can usually guarantee only two of the following three at the same time:
+- Consistency
+- Availability
+- Partition tolerance
 
-- Strategy makes behavior interchangeable without changing the client.
-- Factory keeps construction logic in one place and makes it easier to support new types.
+Typical tradeoff examples:
+- strong consistency usually reduces availability under partitions
+- eventual consistency improves availability and partition tolerance
+- choosing the right tradeoff depends on business needs
 
-### How to use these examples
+### Load balancer
 
-1. Create a strategy or request an object from a factory.
-2. Pass the strategy or factory-produced object to the client.
-3. Execute the behavior without the client knowing the concrete implementation.
+A load balancer distributes requests across multiple servers to improve:
+- availability
+- throughput
+- fault tolerance
+- scalability
+
+Common patterns:
+- round-robin
+- least-connections
+- IP hash
+- weighted balancing
+
+### Client-server (CS)
+
+The client-server model separates:
+- the client that sends requests
+- the server that processes them and returns responses
+
+This is the basic model behind web apps, APIs, mobile apps, and backend services.
+
+### Consistency
+
+Consistency means all readers see the same latest state after writes, depending on the chosen model.
+
+Common models:
+- strong consistency
+- eventual consistency
+- causal consistency
+
+## Design pattern categories
+
+### Creational
+
+- Factory
+- Abstract Factory
+- Builder
+- Singleton
+- Prototype
+
+### Structural
+
+- Adapter
+- Decorator
+- Facade
+- Proxy
+- Composite
+- Bridge
+
+### Behavioral
+
+- Strategy
+- Observer
+- Command
+- State
+- Template Method
+- Chain of Responsibility
 
 ## Example files
 
-| File | Pattern | Purpose |
-|------|---------|---------|
-| `DesignPatternsExample.java` | Strategy | Swap payment behavior without changing the processor |
-| `FactoryPatternExample.java` | Factory | Create objects through a single factory method |
+| File | Purpose |
+|------|---------|
+| [DesignPatternsExample.java](DesignPatternsExample.java) | Strategy pattern example |
+| [FactoryPatternExample.java](FactoryPatternExample.java) | Factory pattern example |
+| [ParkingLotLLDExample.java](ParkingLotLLDExample.java) | LLD example for parking lot flow and slot allocation |
+| [HotelBookingLLDExample.java](HotelBookingLLDExample.java) | LLD example for room booking, validation, and overlap protection |
+| [EcommerceSystemHLDExample.java](EcommerceSystemHLDExample.java) | HLD example covering gateway, services, payment, and async notifications |
+| [ChatSystemHLDExample.java](ChatSystemHLDExample.java) | HLD example for real-time messaging, presence, and offline delivery |
+| [NotificationPipelineHLDExample.java](NotificationPipelineHLDExample.java) | HLD example for async notification pipelines and retry safety |
+| [URLShortenerHLDExample.java](URLShortenerHLDExample.java) | HLD example showing redirect service design and cache bottlenecks |
 
-## System design topics
+## Interview prep docs
 
-- Scalability and load balancing
-- Caching and database sharding
-- Messaging queues and async processing
-- API design and rate limiting
-- Availability, consistency, and CAP tradeoffs
+- [InterviewQnA.md](InterviewQnA.md) — common system design questions with model answers
+- [SystemDesignDiagrams.md](SystemDesignDiagrams.md) — component and sequence diagram notes
 
 ## Interview checklist
 
-- Explain tradeoffs clearly
-- Discuss bottlenecks and scalability options
-- Mention reliability, monitoring, and failover
+- Explain when to use each pattern
+- Compare factory vs builder vs singleton
+- Distinguish LLD from HLD
+- Discuss tradeoffs like availability, consistency, and scaling
+- Mention assumptions, bottlenecks, and failure scenarios
+- Explain class responsibilities, service boundaries, and repository design
+- Discuss state transitions, validations, retries, and idempotency
+- Describe how a system behaves under high load and partial failure
 
-## Time and space complexity
+## Suggested learning path
 
-| Concept | Time | Space |
-|---------|------|-------|
-| Strategy dispatch | O(1) | O(1) |
-| Simple factory creation | O(1) | O(1) |
-| System design evaluation | Depends on architecture | Depends on architecture |
+1. Learn the common pattern groups.
+2. Practice LLD for one feature at a time.
+3. Learn HLD by designing full systems end-to-end.
+4. Practice explaining tradeoffs clearly in interviews.
+
