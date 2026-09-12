@@ -130,7 +130,57 @@ sequenceDiagram
     end
 ```
 
-## 7. What to explain in interviews using diagrams
+## 7. Fundamentals architecture diagram
+
+```mermaid
+flowchart LR
+    Client[Client / Browser / Mobile App] --> API[API Gateway]
+    API --> Auth[Authentication & RBAC]
+    API --> Service[Product / Order Service]
+    Service --> Cache[(Redis Cache)]
+    Service --> DB[(Relational or NoSQL Database)]
+    Service --> CDN[CDN for Static Assets]
+    Auth --> Policy[Role Permissions]
+    Service --> Queue[Async Events / Notifications]
+    Queue --> Worker[Background Worker]
+```
+
+### Explanation
+- The client first hits the API gateway.
+- Authentication and RBAC decide whether the user is allowed to access the resource.
+- The service checks cache before database access for hot reads.
+- The database is still the source of truth.
+- Static content such as images can be served through a CDN.
+- Background workers handle non-critical async tasks like notifications.
+
+## 8. Fundamentals sequence diagram
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API
+    participant Auth
+    participant Service
+    participant Cache
+    participant DB
+
+    User->>API: GET /products/P-101
+    API->>Auth: validate token and role
+    Auth-->>API: allow read
+    API->>Service: fetchProduct(P-101)
+    Service->>Cache: check cached product
+    alt cache hit
+        Cache-->>Service: product data
+    else cache miss
+        Service->>DB: fetch product
+        DB-->>Service: product record
+        Service->>Cache: store product
+    end
+    Service-->>API: product response
+    API-->>User: 200 OK + JSON
+```
+
+### What to explain in interviews using diagrams
 
 When you present a design diagram, explain:
 - the entry points
@@ -139,7 +189,7 @@ When you present a design diagram, explain:
 - the failure points and retry strategy
 - the scaling plan and bottlenecks
 
-## 8. Interview tip
+## 9. Interview tip
 
 A diagram is not enough by itself. You should also say:
 - where the system is read-heavy or write-heavy
