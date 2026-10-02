@@ -4,6 +4,16 @@ Behavioral patterns focus on communication between objects and how responsibilit
 
 ## 1. Strategy Pattern
 
+Runnable example: [DesignPatternsExample.java](DesignPatternsExample.java)
+
+Dry run:
+
+```text
+Paid 500 using Credit Card
+```
+
+`PaymentProcessor` delegates to the injected `PaymentStrategy`, so another payment method can be selected without changing the processor.
+
 Use when:
 - multiple algorithms can be swapped at runtime
 

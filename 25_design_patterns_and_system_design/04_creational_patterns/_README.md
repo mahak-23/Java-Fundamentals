@@ -4,6 +4,17 @@ Creational patterns control how objects are created. They help hide construction
 
 ## 1. Factory Pattern
 
+Runnable example: [FactoryPatternExample.java](FactoryPatternExample.java)
+
+Dry run:
+
+```text
+Driving a car
+Riding a bike
+```
+
+The client requests each type through `VehicleFactory`; the factory selects the concrete class and the client calls the shared `Vehicle` interface.
+
 Use when:
 - you want to centralize object creation
 - the exact class should depend on runtime conditions

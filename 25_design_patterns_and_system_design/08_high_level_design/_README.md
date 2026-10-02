@@ -391,3 +391,12 @@ Split data across multiple DB instances to reduce hotspots and increase capacity
 ## Key takeaway
 
 HLD is about choosing the right architectural shape for the system, not just implementing feature logic. A strong answer proves that you understand traffic patterns, bottlenecks, failure modes, and business constraints.
+
+## Worked examples and diagrams
+
+- [URL shortener Java example](../09_system_design_examples/URLShortenerHLDExample.java)
+- [Chat system Java example](../09_system_design_examples/ChatSystemHLDExample.java)
+- [E-commerce Java example](../09_system_design_examples/EcommerceSystemHLDExample.java)
+- [Notification pipeline Java example](../09_system_design_examples/NotificationPipelineHLDExample.java)
+- [System design diagrams](../09_system_design_examples/SystemDesignDiagrams.md)
+- [System design example notes](../09_system_design_examples/SystemDesignExamples.md)

@@ -3,11 +3,39 @@
 Low-level design focuses on the implementation details of a single module or feature.
 
 It answers questions like:
+
 - what classes exist?
 - what are the responsibilities of each class?
 - how do the classes interact?
 - what are the APIs, repositories, services, and models?
 - what exceptions, validations, and edge cases matter?
+
+## Java examples
+
+- [Parking lot LLD](ParkingLotLLDExample.java)
+- [Hotel booking LLD](HotelBookingLLDExample.java)
+
+Parking lot dry run:
+
+```text
+Car parked: TKT-C-101 at slot 1
+Bike parked: TKT-B-202 at slot 3
+Parking lot status:
+Slot 1 (CAR) => OCCUPIED
+Slot 2 (CAR) => AVAILABLE
+Slot 3 (BIKE) => OCCUPIED
+Slot 4 (TRUCK) => AVAILABLE
+```
+
+The service scans for the first available slot that accepts the vehicle type, issues a ticket, and reports the updated slot state.
+
+The hotel-booking demo books two non-overlapping stays. Its generated booking ID suffix varies by run:
+
+```text
+Booked room: R101 for Ava
+Booking BK-G1-<generated> -> Ava / R101 / CONFIRMED
+Booking BK-G2-<generated> -> Ishaan / R102 / CONFIRMED
+```
 
 ## Typical LLD questions
 
@@ -27,6 +55,7 @@ It answers questions like:
 These are model objects representing business data.
 
 Examples:
+
 - `User`
 - `Order`
 - `Product`
@@ -39,6 +68,7 @@ Examples:
 Immutable or wrapped data structures used to represent domain concepts.
 
 Examples:
+
 - `Money`
 - `Address`
 - `DateRange`
@@ -49,6 +79,7 @@ Examples:
 Services encapsulate business logic and orchestrate the flow.
 
 Examples:
+
 - `ParkingLotService.allocateSlot(vehicle)`
 - `BillingService.calculateCharges(order)`
 - `BookingService.createBooking(user, hotelRoom, dates)`
@@ -59,6 +90,7 @@ Examples:
 These handle persistence and data access.
 
 Examples:
+
 - `UserRepository.findById(id)`
 - `OrderRepository.save(order)`
 - `SlotRepository.getAvailableSlots(location)`
@@ -68,12 +100,14 @@ Examples:
 These expose operations to the outside and coordinate multiple components.
 
 Examples:
+
 - `BookingController.createBooking(request)`
 - `PaymentFacade.pay(order, paymentMethod)`
 
 ### 6. Validation and exceptions
 
 A real LLD design must define:
+
 - invalid input handling
 - duplicate booking prevention
 - negative stock or balance checks
@@ -83,9 +117,11 @@ A real LLD design must define:
 ## Example: Ride Sharing LLD
 
 ### Problem
+
 Design a ride-sharing system where a rider requests a ride, the system finds a nearby driver, and the trip is charged after completion.
 
 ### Core entities
+
 - `User`
 - `Driver`
 - `Ride`
@@ -94,6 +130,7 @@ Design a ride-sharing system where a rider requests a ride, the system finds a n
 - `Payment`
 
 ### Core services
+
 - `RideMatchingService.findNearestDriver(location)`
 - `BookingService.createRideRequest(user, source, destination)`
 - `PaymentService.chargeRide(ride)`
@@ -101,12 +138,14 @@ Design a ride-sharing system where a rider requests a ride, the system finds a n
 - `TripService.completeTrip(ride)`
 
 ### Important decisions
+
 - Rider and driver can be represented as separate user roles.
 - A ride progresses through states like `REQUESTED`, `ACCEPTED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`.
 - Driver matching may use nearest-distance sorting or a simple geo-index idea.
 - Fare calculation should be separated from payment execution.
 
 ### Edge cases
+
 - driver cancels after accepting
 - rider cancels before pickup
 - no available drivers nearby
@@ -114,6 +153,7 @@ Design a ride-sharing system where a rider requests a ride, the system finds a n
 - payment timeout or failed transaction
 
 ### Example API design
+
 - `POST /rides/request`
 - `POST /rides/{rideId}/accept`
 - `POST /rides/{rideId}/start`
@@ -136,6 +176,7 @@ Design a ride-sharing system where a rider requests a ride, the system finds a n
    - simple in-memory matching is okay for low scale; a geo-index or queue is needed for scale
 
 ### Questions to ask the interviewer
+
 - Do you want only ride creation or also driver matching and dispatch?
 - Should a driver accept a ride manually or automatically?
 - Is pricing fixed or dynamic based on distance and surge?
@@ -144,6 +185,7 @@ Design a ride-sharing system where a rider requests a ride, the system finds a n
 ## Example: Splitwise LLD
 
 ### Entities
+
 - `User`
 - `Group`
 - `Expense`
@@ -151,16 +193,19 @@ Design a ride-sharing system where a rider requests a ride, the system finds a n
 - `Settlement`
 
 ### Services
+
 - `ExpenseService.addExpense(groupId, payerId, amount, participants)`
 - `SettlementService.calculateBalances(groupId)`
 - `UserService.getNetBalances(userId)`
 
 ### Design reasoning
+
 - Store each expense and derive balances across participants.
 - Avoid storing only aggregated balances if you need historical traceability.
 - Settlement logic is a classic balancing problem: compute net amounts and settle minimal transfers.
 
 ### Edge cases
+
 - shared expenses with uneven splits
 - one user owes multiple members
 - repeated updates to an expense
@@ -169,6 +214,7 @@ Design a ride-sharing system where a rider requests a ride, the system finds a n
 ## Example: Payment System LLD
 
 ### Entities
+
 - `Customer`
 - `Order`
 - `Payment`
@@ -176,12 +222,14 @@ Design a ride-sharing system where a rider requests a ride, the system finds a n
 - `Refund`
 
 ### Services
+
 - `PaymentService.authorizePayment(order, method)`
 - `PaymentService.capturePayment(payment)`
 - `RefundService.refund(orderId, amount)`
 - `InvoiceService.generateInvoice(order)`
 
 ### Design rules
+
 - payment state transitions matter: `INITIATED -> AUTHORIZED -> CAPTURED -> SETTLED`
 - idempotency is critical for retry-safe payment flows
 - store audit logs for reconciliation and disputes
@@ -201,6 +249,7 @@ Design a ride-sharing system where a rider requests a ride, the system finds a n
    - stronger consistency makes the system safer but slower and more complex
 
 ### Questions to ask the interviewer
+
 - Is this a single payment provider or multiple gateways?
 - Do we need refunds and partial payments?
 - Does the business need strict audit logs or eventual reconciliation?
