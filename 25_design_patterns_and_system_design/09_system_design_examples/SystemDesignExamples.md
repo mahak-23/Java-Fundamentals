@@ -186,7 +186,56 @@ flowchart TD
     API --> DB[(Product/Order DB)]
 ```
 
-### 5. AI-powered application design
+### 5. File storage service design
+
+Problem:
+
+- accept large file uploads securely
+- store files durably and efficiently
+- allow fast access for downloads and media delivery
+- manage metadata, chunking, versioning, and access control
+
+Key components:
+
+- client upload/download service
+- API gateway with auth and policy checks
+- metadata service and metadata database
+- object storage for file bytes
+- chunking and checksum service
+- CDN for edge delivery
+- logging and monitoring for failures and retries
+
+Main flow:
+
+- client uploads a file to the API
+- service validates the request and user permissions
+- the file is split into chunks and uploaded to object storage
+- metadata database keeps the file record, version, and chunk list
+- clients download either from CDN or the object store origin
+- the system can invalidate or refresh CDN content on updates
+
+Important considerations:
+
+- large uploads should support retries and resume capability
+- metadata is as important as the file bytes themselves
+- private files need signed URLs or origin validation
+- object storage is ideal for immutable files, while block storage suits database disks
+- AI workloads often use this pattern for training data, checkpoints, and document storage
+
+Example flow:
+
+```mermaid
+flowchart LR
+    U[User] --> API[Upload API]
+    API --> AUTH[Auth + Policy]
+    AUTH --> CHUNK[Chunking + Checksum]
+    CHUNK --> OBJ[(Object Storage)]
+    CHUNK --> META[(Metadata DB)]
+    META --> CDN[CDN / Edge Cache]
+    CDN --> U
+```
+
+### 6. AI-powered application design
 
 Problem:
 

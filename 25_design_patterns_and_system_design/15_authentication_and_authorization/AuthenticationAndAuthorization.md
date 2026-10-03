@@ -306,3 +306,194 @@ For system design interviews, the key points are:
 - RBAC is a practical pattern for permission management
 - API security requires defense in depth
 - AI systems need specific threat analysis because model behavior can be manipulated or abused
+
+### Asked in real interviews
+
+Practice explaining the design choices and security trade-offs behind questions such as:
+
+| Interview question |
+| --- |
+| Design authentication for a web and mobile application. |
+| Compare JWTs and server-side sessions. What are the trade-offs? |
+| Walk through the OAuth 2.0 authorization-code flow. |
+| How should passwords be stored securely? |
+| Design a role-based permission system. |
+| How do access and refresh tokens work together? |
+| How would you secure a public REST API? |
+
+### Model answers
+
+#### 1. Design authentication for a web and mobile application
+
+Answer in simple terms:
+
+- Use HTTPS everywhere.
+- Use an identity provider with OIDC/OAuth 2.0.
+- For browser apps, use secure cookies with `HttpOnly`, `Secure`, and proper `SameSite` settings.
+- For mobile and public clients, use the authorization-code flow with PKCE.
+- Issue short-lived access tokens.
+- Store refresh tokens securely and rotate them.
+- Every backend API must still check authorization, not just trust the client.
+
+Why this works:
+
+- Browser apps can keep session state safely on the server side.
+- Mobile apps cannot safely hold a client secret, so PKCE is required.
+- Short token lifetime reduces damage if a token is stolen.
+
+Interview-friendly summary:
+
+> Use a trusted identity provider, secure cookies for browsers, PKCE for mobile apps, short-lived access tokens, and secure refresh-token rotation. Authentication proves identity; authorization decides what the user can do.
+
+#### 2. Compare JWTs and server-side sessions
+
+Short answer:
+
+- Session-based auth: server stores session state; client gets a session ID.
+- JWT auth: client keeps the signed token; server validates it locally.
+
+Comparison:
+
+| Option | Advantages | Drawbacks |
+| --- | --- | --- |
+| Server-side session | Easy to revoke, easy to invalidate, strong server control | Requires session storage and scaling strategy |
+| JWT | Stateless, good for distributed APIs, easy validation | Harder to revoke before expiry, token payload is visible to clients |
+
+Best choice:
+
+- Use sessions for traditional web apps with a server and browser.
+- Use short-lived JWTs when multiple services need to validate tokens independently.
+- In both cases, use HTTPS, proper expiration, and secure storage.
+
+Important note:
+
+- JWTs are signed, not encrypted.
+- Never put secrets or sensitive user data in the token payload.
+
+#### 3. Walk through the OAuth 2.0 authorization-code flow
+
+Step-by-step:
+
+1. User opens the app and clicks login.
+2. App redirects the user to the authorization server.
+3. User signs in and grants consent.
+4. Authorization server redirects back with an authorization code.
+5. App validates the `state` value.
+6. App sends the code and PKCE verifier to the token endpoint.
+7. Server returns access token and refresh token.
+8. App calls the protected API using the access token.
+
+Security points:
+
+- Use PKCE for public clients.
+- Use a redirect URI that is tightly controlled.
+- Validate issuer, audience, expiry, and scopes on the API side.
+- Use OIDC if the app needs user identity information as well.
+
+Interview-ready explanation:
+
+> OAuth is for delegated authorization. The app asks for consent, receives a code, exchanges it for tokens, and then uses an access token to call the API. OIDC adds identity information about the user.
+
+#### 4. How should passwords be stored securely?
+
+Best practice:
+
+- Never store plain text passwords.
+- Never use reversible encryption for passwords.
+- Hash each password with a unique salt.
+- Use a slow password hashing algorithm such as Argon2id, bcrypt, or scrypt.
+- Store the algorithm parameters with the hash.
+
+Why:
+
+- A password database leak should not reveal user passwords.
+- Salting prevents precomputed rainbow-table attacks.
+- Slow hashing makes brute-force attempts much more expensive.
+
+In addition:
+
+- enforce a reasonable minimum password length
+- rate-limit login attempts
+- add MFA for sensitive accounts
+- protect password reset flows carefully
+
+Simple answer:
+
+> Store password hashes, not passwords. Use unique salts and a slow adaptive hashing function such as Argon2id or bcrypt.
+
+#### 5. Design a role-based permission system
+
+Model the design as separate entities:
+
+- Users
+- Roles
+- Permissions
+- Role-to-user assignments
+- Resource ownership or tenant information
+
+Example:
+
+- `ADMIN`: can manage users and delete records
+- `EDITOR`: can create and update content
+- `VIEWER`: can only read content
+
+Design rules:
+
+- Enforce checks at the backend, not only in the UI.
+- Default to deny if no rule matches.
+- Validate both user identity and resource access.
+- Use least privilege.
+- Audit high-risk actions.
+
+If the permission depends on business context, upgrade to ABAC or a policy engine.
+
+Interview summary:
+
+> Roles group permissions; authorization checks compare the user's permissions with the requested action and resource. We always enforce the check on the backend and default to deny.
+
+#### 6. How do access and refresh tokens work together?
+
+Simple flow:
+
+- Login succeeds -> server issues access token + refresh token.
+- Access token is used for API requests.
+- Access token expires after a short time.
+- When expired, client sends refresh token to the auth server.
+- Auth server validates the refresh token and returns a new access token.
+- Refresh token is rotated when possible.
+
+Important security rules:
+
+- Access token is short-lived and should not carry long-term authority.
+- Refresh token is more sensitive and must be stored securely.
+- Refresh token should not be sent to resource APIs.
+- Reuse of refresh tokens should be detected and treated as suspicious.
+
+Why this is important:
+
+- Short-lived access tokens reduce risk if stolen.
+- Refresh tokens allow the user to stay logged in without re-entering credentials.
+
+#### 7. How would you secure a public REST API?
+
+Use a layered defense approach:
+
+- Enforce HTTPS only.
+- Require strong authentication and least-privilege authorization.
+- Validate all inputs and protect against injection.
+- Add rate limiting and request quotas.
+- Use a secret manager for API keys and credentials.
+- Log security events without logging passwords or tokens.
+- Set strict CORS and proper CSRF protections for browser clients.
+- Add timeouts, retries, idempotency, and input size limits.
+
+For public APIs, also:
+
+- return generic error messages
+- hide internal system details
+- rotate keys regularly
+- monitor suspicious patterns and alert on abuse
+
+Interview-ready answer:
+
+> Secure the API at the edge and inside the service. Use HTTPS, authentication, authorization, rate limits, input validation, least privilege, secret management, and monitoring. The goal is to stop abuse early and reduce the blast radius if a credential is leaked.

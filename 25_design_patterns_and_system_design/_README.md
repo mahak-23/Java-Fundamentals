@@ -15,10 +15,11 @@ This folder contains focused notes for system design, architecture, algorithms, 
 9. [System design examples and diagrams](09_system_design_examples/SystemDesignExamples.md)
 10. [Database design](10_database_design/DataBaseDesign.md)
 11. [Caching and CDN](11_caching_and_cdn/CachingAndCDN.md)
-12. [Load balancing and infrastructure](12_load_balancing/LoadBalancing.md)
-13. [Message queues and event-driven architecture](13_message_queues/MessageQueues.md)
-14. [Rate limiting](14_rate_limiting/RateLimiting.md)
-15. [Authentication and authorization](15_authentication_and_authorization/AuthenticationAndAuthorization.md)
+12. [File storage and object storage](file_storage/FileStorage.md)
+13. [Load balancing and infrastructure](12_load_balancing/LoadBalancing.md)
+14. [Message queues and event-driven architecture](13_message_queues/MessageQueues.md)
+15. [Rate limiting](14_rate_limiting/RateLimiting.md)
+16. [Authentication and authorization](15_authentication_and_authorization/AuthenticationAndAuthorization.md)
 
 ## Browse by purpose
 
@@ -26,4 +27,3 @@ This folder contains focused notes for system design, architecture, algorithms, 
 - [Code and design examples](reference_example_files/ExampleFiles.md)
 - [Interview preparation](reference_interview_preparation/InterviewPreparation.md)
 - [System design cheat sheet](reference_system_design_cheat_sheet/SystemDesignCheatSheet.md)
-

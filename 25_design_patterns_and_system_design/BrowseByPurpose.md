@@ -16,6 +16,7 @@ Use this index when you know what you want to practice but not which numbered mo
 - [Worked designs and architecture diagrams](09_system_design_examples/_README.md)
 - [Database design](10_database_design/DataBaseDesign.md)
 - [Caching and CDN](11_caching_and_cdn/CachingAndCDN.md)
+- [File storage and object storage](file_storage/FileStorage.md)
 - [Load balancing](12_load_balancing/LoadBalancing.md)
 - [Message queues](13_message_queues/MessageQueues.md)
 - [Rate-limiting algorithms and implementation](14_rate_limiting/RateLimiting.md)

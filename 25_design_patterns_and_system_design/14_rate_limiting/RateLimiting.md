@@ -20,6 +20,50 @@ Good rate limiting helps maintain:
 - cost control
 - stability for backend systems
 
+### Reject response: HTTP 429 with Retry-After
+
+When a client exceeds its quota, return `429 Too Many Requests` instead of silently dropping the request. Include `Retry-After` to tell the client when it may try again.
+
+```http
+HTTP/1.1 429 Too Many Requests
+Content-Type: application/json
+Retry-After: 3
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 0
+
+{
+    "error": "rate_limit_exceeded",
+    "message": "Too many requests. Try again later."
+}
+```
+
+`Retry-After` can contain either:
+
+- A delay in seconds, such as `Retry-After: 3`.
+- An HTTP date at which retrying is allowed.
+
+Client behavior:
+
+- Wait for the indicated delay before retrying.
+- For repeated failures, use exponential backoff and add jitter to avoid synchronized retry bursts.
+- Do not retry indefinitely; stop after a bounded number of attempts or surface the limit to the user.
+
+The server should calculate the retry time from the limiter state, such as the next token refill or window reset, rather than returning an arbitrary delay.
+
+### Asked in real interviews
+
+Rate limiting is a common system-design warm-up across experience levels. Practice explaining the design, implementation, and trade-offs behind questions such as:
+
+| Interview question |
+| --- |
+| Design a rate limiter for a public API. |
+| Compare token bucket and leaky bucket. |
+| How would you rate-limit across many servers? |
+| What are the trade-offs between per-IP and per-user limits? |
+| How would you implement a sliding-window counter? |
+| What status code and headers should a rejected request return? |
+| Why do APIs need rate limiting, and what threats does it mitigate? |
+
 ### Token bucket algorithm
 
 The token bucket algorithm allows a certain number of requests to be processed in bursts while still enforcing an overall average rate.
