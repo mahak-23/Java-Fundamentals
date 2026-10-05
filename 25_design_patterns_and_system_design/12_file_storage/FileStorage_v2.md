@@ -1007,6 +1007,77 @@ File storage shows up as a standalone question and as a storage layer inside big
 
 > Tip: Open any file-storage answer by explaining the three storage layers: compute, metadata, and data placement. That usually signals strong system design instincts.
 
+### Interview-ready answer: design a Dropbox-style file service
+
+#### 1. Clarify requirements
+
+Users should be able to upload, download, list, and share files. Large uploads must resume after network failures. Files must be private by default, durable, and available from multiple regions. Confirm expected file sizes, traffic, sharing behavior, and consistency needs before choosing exact storage and replication settings.
+
+#### 2. High-level design
+
+- API service authenticates the user, checks quota and permissions, and creates an upload session.
+- Metadata database stores file ID, owner, name, size, checksum, version, state, and access policy.
+- Object storage stores file bytes; large files use multipart chunks.
+- Queue-driven workers verify uploads, scan for malware, generate previews, and update metadata.
+- CDN serves authorized, frequently requested downloads through short-lived signed URLs.
+
+#### 3. Upload flow
+
+1. Client calls `POST /files/uploads` with the file name, size, and checksum.
+2. Service checks authorization and quota, creates an `UPLOADING` record, and returns an upload ID plus signed part URLs.
+3. Client uploads chunks directly to object storage and retries failed parts using the same part IDs.
+4. Client calls `POST /files/uploads/{uploadId}/complete` with uploaded part checksums.
+5. Service verifies the object checksum and size, then marks the file `READY`. A background event can trigger malware scanning and preview generation.
+
+If completion is retried, the upload ID makes the operation idempotent. An incomplete upload expires and its temporary parts are removed by a lifecycle job.
+
+#### 4. Download and sharing flow
+
+1. Client requests a file by ID.
+2. Service checks ownership or sharing permission and confirms the file is `READY`.
+3. Service returns a short-lived signed download URL, optionally pointing at the CDN.
+4. Client downloads from the CDN or object store, using byte-range requests to resume or seek.
+
+Never treat an unguessable object key as authorization. Check permissions before issuing the URL, keep its lifetime short, and revoke access by changing policy and invalidating or expiring cached authorization.
+
+#### 5. Data model and state
+
+| Record | Important fields |
+| --- | --- |
+| File | `file_id`, `owner_id`, `name`, `size`, `checksum`, `version`, `state`, `created_at` |
+| Upload session | `upload_id`, `file_id`, `part_count`, `expires_at`, `state` |
+| Share permission | `file_id`, `principal_id`, `permission`, `expires_at` |
+
+Use explicit states such as `UPLOADING`, `VERIFYING`, `READY`, and `FAILED`; readers only receive files in `READY` state. Keep metadata and permissions in a database, and keep the large byte payload in object storage.
+
+#### 6. Scale and failure handling
+
+- Stateless API instances scale horizontally; object storage handles the large byte traffic.
+- Partition metadata by owner or file ID, and index common listing queries such as owner plus creation time.
+- Retry failed chunks independently and verify checksums before marking the file ready.
+- Use object-store durability features and replication across failure domains; restore metadata from backups and reconcile orphaned objects asynchronously.
+- Apply quotas, upload-size limits, malware scanning, encryption, audit logs, and rate limits.
+- Measure upload completion time, failed-part rate, download latency, storage errors, and orphan cleanup.
+
+#### 7. Main trade-offs to explain
+
+- Direct-to-object-store upload avoids making application servers a bandwidth bottleneck; proxying through the app is simpler when every byte needs synchronous inspection.
+- Multipart uploads improve retryability and parallelism but add session and cleanup state.
+- Strong consistency for file metadata makes a completed upload visible immediately; asynchronous previews and indexing can be eventually consistent.
+- CDN caching improves global download latency and reduces origin load, but private content needs short-lived authorization and careful cache invalidation.
+
+### Common interview questions with direct answers
+
+| Question | Interview-ready answer |
+| --- | --- |
+| Object vs block storage: when do you use each? | Use object storage for large files addressed by key and metadata, such as media, backups, and uploads. Use block storage for disks that need low-latency random reads and writes, such as database volumes. Use network file storage when applications need shared filesystem semantics. |
+| How do you upload a 5 GB file reliably? | Create an upload session, split the file into multipart chunks, upload parts directly with signed URLs, retry only failed parts, and verify checksums before marking the file ready. Expire incomplete sessions and clean up their parts. |
+| How do you serve files globally with low latency? | Put a CDN in front of object storage, cache popular immutable content near users, and use range requests for large files. For private files, authorize first and issue short-lived signed URLs. |
+| Should uploaded images be stored in a database? | Store the image bytes in object storage. Keep searchable metadata, ownership, permissions, and the object key in the database. |
+| What is a presigned URL? | It is a time-limited URL granting a specific operation on a specific object. It lets clients upload or download directly without exposing long-lived storage credentials. The application still authorizes the request before creating it. |
+| How do you invalidate CDN content? | Prefer versioned or content-addressed object keys so changed content gets a new URL. For mutable stable URLs, issue a purge when needed and use a bounded TTL; private authorization should not rely on stale public cache entries. |
+| What if upload completion is retried or a chunk fails? | Make completion idempotent using the upload ID, retry only missing or failed parts, verify the final checksum, and transition metadata to `READY` only after validation succeeds. |
+
 ---
 
 ### Summary
