@@ -11,5 +11,5 @@
 | [NotificationPipelineHLDExample.java](../09_system_design_examples/NotificationPipelineHLDExample.java) | HLD example for async notification pipelines and retry safety            |
 | [URLShortenerHLDExample.java](../09_system_design_examples/URLShortenerHLDExample.java) | HLD example showing redirect service design and cache bottlenecks        |
 | [SystemDesignFundamentalsExample.java](../02_system_design_fundamentals/SystemDesignFundamentalsExample.java) | Demo for RBAC, caching, API flow, and database-source-of-truth design    |
-| [RateLimitingAlgorithmsExample.java](../14_rate_limiting/RateLimitingAlgorithmsExample.java) | Token bucket, fixed/sliding windows, and leaky bucket with deterministic dry runs |
-| [RoundRobinLoadBalancerExample.java](../12_load_balancing/RoundRobinLoadBalancerExample.java) | Thread-safe round-robin server selection with printed request routing |
+| [RateLimitingAlgorithmsExample.java](../15_rate_limiting/RateLimitingAlgorithmsExample.java) | Token bucket, fixed/sliding windows, and leaky bucket with deterministic dry runs |
+| [RoundRobinLoadBalancerExample.java](../13_load_balancing/RoundRobinLoadBalancerExample.java) | Thread-safe round-robin server selection with printed request routing |

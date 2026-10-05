@@ -16,11 +16,12 @@ Use this index when you know what you want to practice but not which numbered mo
 - [Worked designs and architecture diagrams](09_system_design_examples/_README.md)
 - [Database design](10_database_design/DataBaseDesign.md)
 - [Caching and CDN](11_caching_and_cdn/CachingAndCDN.md)
-- [File storage and object storage](file_storage/FileStorage.md)
-- [Load balancing](12_load_balancing/LoadBalancing.md)
-- [Message queues](13_message_queues/MessageQueues.md)
-- [Rate-limiting algorithms and implementation](14_rate_limiting/RateLimiting.md)
-- [Authentication and authorization](15_authentication_and_authorization/AuthenticationAndAuthorization.md)
+- [File storage and object storage](12_file_storage/FileStorage.md)
+- [Load balancing](13_load_balancing/LoadBalancing.md)
+- [Message queues](14_message_queues/MessageQueues.md)
+- [Rate-limiting algorithms and implementation](15_rate_limiting/RateLimiting.md)
+- [Authentication and authorization](16_authentication_and_authorization/AuthenticationAndAuthorization.md)
+- [Feed generation and social timelines](17_feed_generation/FeedGeneration.md)
 
 ## Practice or review
 
@@ -32,7 +33,7 @@ Use this index when you know what you want to practice but not which numbered mo
 
 ## Find code and dry runs
 
-- [Rate-limiting algorithms](14_rate_limiting/RateLimitingAlgorithmsExample.java)
-- [Round-robin load balancer](12_load_balancing/RoundRobinLoadBalancerExample.java)
+- [Rate-limiting algorithms](15_rate_limiting/RateLimitingAlgorithmsExample.java)
+- [Round-robin load balancer](13_load_balancing/RoundRobinLoadBalancerExample.java)
 - [LLD Java examples](07_low_level_design/_README.md)
 - [HLD Java examples and diagrams](09_system_design_examples/_README.md)
