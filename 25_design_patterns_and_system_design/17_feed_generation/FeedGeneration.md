@@ -68,14 +68,238 @@ flowchart TD
 
 ---
 
+## 3. Designing Social Feeds
+
+A social feed is a personalized, continuously changing stream of content for a user. We are not simply returning the latest posts in time order. We are selecting a candidate set, ordering it using relevance signals, and then serving it within a strict latency budget.
+
+### Feed definition and challenges
+
+A feed is usually shaped by these questions:
+
+- Who are the users and creators?
+- Which content and signals matter?
+- How many followers can a creator have?
+- How frequently do users refresh the feed?
+- How fresh should the feed be?
+- What is the cost of caching versus recomputing?
+
+Main challenges:
+
+- enormous read/write asymmetry
+- hot users and viral content spikes
+- personalization quality vs latency
+- stale feeds and invalidation complexity
+- keeping the feed fresh without doing too much work
+
+### Naive feed query
+
+The simplest possible design is:
+
+- fetch all posts by people the user follows
+- merge and sort by timestamp
+- return the first N results
+
+Pseudo-code:
+
+```sql
+SELECT p.*
+FROM posts p
+JOIN follows f ON f.following_id = p.user_id
+WHERE f.follower_id = :user_id
+ORDER BY p.created_at DESC
+LIMIT 20;
+```
+
+This works only for small datasets. In production, it fails because:
+
+- a user may follow thousands of accounts
+- a single viral account may generate too many posts
+- ranking by time ignores relevance and engagement
+- database scans become expensive at scale
+
+### Fan-out on write (push)
+
+Fan-out on write means that when user A creates a post, the system pushes a copy of that post into A's followers' personalized feed lists.
+
+Pros:
+
+- very fast reads
+- good for hot timelines and steady user activity
+- easy to cache the first page of a feed
+
+Cons:
+
+- write amplification
+- more storage and event-processing cost
+- hot creators create huge fanout spikes
+
+### Fan-out on read (pull)
+
+Fan-out on read stores the original post once and, when the user opens the feed, pulls relevant posts from the creators they follow and merges them at read time.
+
+Pros:
+
+- lower write cost
+- easier for sparse or inactive users
+- simple to store raw content only once
+
+Cons:
+
+- slower reads
+- more complex ranking and fetch logic
+- harder to scale under large active user graphs
+
+### Push vs pull trade-offs
+
+| Option           | Best for                   | Why it works           | Main pain                 |
+| ---------------- | -------------------------- | ---------------------- | ------------------------- |
+| Fan-out on write | large active social graphs | feed is already ready  | large write amplification |
+| Fan-out on read  | sparse or cold feeds       | only fetch when needed | higher read latency       |
+
+A common rule:
+
+- push for active, heavy-read users and popular creators
+- pull for inactive users or low-frequency home feeds
+- hybrid for the rest
+
+### Celebrity problem
+
+The celebrity problem happens when a very popular creator has millions of followers. If we push a post to every follower's timeline, we create a large write storm and a huge storage burden.
+
+A practical fix is:
+
+- keep the post in the global post store
+- create special hot-content or trending candidate sets
+- rank the content at read time for each user
+- use a cache for the top page of the feed
+
+This reduces duplication and keeps the system responsive.
+
+### Hybrid solution
+
+Most real social platforms use a hybrid design.
+
+Example:
+
+- store posts in a global store
+- maintain a precomputed timeline for active users
+- keep a lazy path for inactive or cold users
+- use cache warming for hot leaders and top creators
+- use ranking and freshness logic before returning the top N items
+
+```mermaid
+flowchart TD
+    A[User creates post] --> B[Post store]
+    B --> C[Follower graph]
+    C --> D[Hot users: push timeline]
+    C --> E[Cold users: pull on read]
+    D --> F[Timeline cache]
+    E --> G[Candidate fetch + rank]
+    F --> H[Feed response]
+    G --> H
+```
+
+### Ranking strategies
+
+The feed is not just a list; it is a ranking problem.
+
+Common strategies:
+
+- recency-first: newest posts first
+- engagement-based: likes, comments, shares, dwell time
+- relevance-based: user interest, author affinity, topic match
+- diversity-aware: avoid showing only one creator or topic
+- freshness-weighted: blend recent content with user interest
+
+### Scoring and ML ranking
+
+A simple formula can be:
+
+$$
+score = w_1 \times recency + w_2 \times affinity + w_3 \times engagement + w_4 \times quality - penalty
+$$
+
+Where:
+
+- recency rewards new content
+- affinity rewards creators the user interacts with
+- engagement captures likes, comments, shares, dwell time
+- quality suppresses spam and clickbait
+- penalty reduces repetition or low-trust sources
+
+Production systems usually move from handcrafted scoring to ML ranking. The model predicts the probability of a click, dwell time, or conversion and then ranks candidates by predicted relevance.
+
+### Timeline storage and caching
+
+The precomputed timeline is usually stored as:
+
+- one list per user, ordered by score or timestamp
+- Redis or in-memory cache for hot user timelines
+- a durable post store or database for the master data
+- optional derived ranked lists for top feed items
+
+Common storage pattern:
+
+- store post metadata and content separately
+- store feed IDs in per-user lists
+- keep post content in a separate content store when necessary
+- cache the first page and top N sorted candidates
+
+Example:
+
+```text
+user:42 -> [post_901, post_756, post_440, ...]
+post_901 -> metadata + content ref
+```
+
+### AI/ML two-stage pipeline
+
+Many modern feeds use a two-stage pipeline:
+
+1. Candidate generation
+   - collect a few hundred likely posts from followed users, trends, and recommendations
+2. Ranking and filtering
+   - score each candidate using a model and reorder the feed
+
+```mermaid
+flowchart LR
+    A[Candidate generation] --> B[User profile + social graph]
+    A --> C[Recent posts + trending content]
+    B --> D[Ranking model]
+    C --> D
+    D --> E[Score each candidate]
+    E --> F[Filter spam + low-quality content]
+    F --> G[Return top N for user feed]
+```
+
+This setup is common because:
+
+- computing a full global ranking for every user would be too expensive
+- candidate generation narrows the search space
+- ranking can use personalized, ML-based signals
+
+### Practical production pattern
+
+The best feed design usually combines:
+
+- durable post store
+- user graph / follow edges
+- push for hot users and top creators
+- pull for cold or less active users
+- cache for home timeline and first page
+- scoring + ML ranking for final ordering
+- invalidation and TTL for freshness
+
+---
+
 ## 3. Core design decisions
 
 There are two main ways to generate feeds:
 
-| Strategy | How it works | Best for | Main trade-off |
-| --- | --- | --- | --- |
-| Fanout on write | When a user posts, push the post to all relevant followers’ timelines immediately | High-read, large active user bases, viral content | Higher write amplification and storage cost |
-| Fanout on read | Store the post once, then fetch and merge relevant posts when a user opens the feed | Less active users, lower write load | Higher read latency and more complex query logic |
+| Strategy        | How it works                                                                        | Best for                                          | Main trade-off                                   |
+| --------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------ |
+| Fanout on write | When a user posts, push the post to all relevant followers’ timelines immediately   | High-read, large active user bases, viral content | Higher write amplification and storage cost      |
+| Fanout on read  | Store the post once, then fetch and merge relevant posts when a user opens the feed | Less active users, lower write load               | Higher read latency and more complex query logic |
 
 ---
 
@@ -227,16 +451,16 @@ Real systems often use both:
 
 A typical feed item record contains:
 
-| Field | Purpose |
-| --- | --- |
-| feed_id | unique feed entry ID |
-| user_id | user whose feed this item belongs to |
-| post_id | original post ID |
-| author_id | who created the post |
-| created_at | time of post creation |
-| score | ranking score |
-| seen_at | last seen timestamp |
-| flags | hidden, muted, blocked, spam, etc. |
+| Field      | Purpose                              |
+| ---------- | ------------------------------------ |
+| feed_id    | unique feed entry ID                 |
+| user_id    | user whose feed this item belongs to |
+| post_id    | original post ID                     |
+| author_id  | who created the post                 |
+| created_at | time of post creation                |
+| score      | ranking score                        |
+| seen_at    | last seen timestamp                  |
+| flags      | hidden, muted, blocked, spam, etc.   |
 
 This data is usually stored in a sorted log or key-value style structure such as:
 
@@ -254,7 +478,7 @@ Ranking decides the order of posts within a feed. The goal is to maximize releva
 
 Posts are ordered by time.
 
-Score = time_weight * recency
+Score = time_weight \* recency
 
 Pros:
 
@@ -271,7 +495,7 @@ Cons:
 
 Score depends on likes, comments, clicks, watch time, shares, and dwell time.
 
-Score = w1 * likes + w2 * comments + w3 * shares + w4 * watch_time
+Score = w1 _ likes + w2 _ comments + w3 _ shares + w4 _ watch_time
 
 Pros:
 
@@ -458,28 +682,131 @@ A strong production design often looks like this:
 
 ### Asked in real interviews
 
-| Question | What they want to hear |
-| --- | --- |
-| Design a social feed system | Architecture, read/write trade-offs, scaling |
-| Fanout on write vs fanout on read | pros/cons, when to choose each |
-| How do you make the feed fast? | caching, indexing, timeline design |
-| How do you rank feed items? | recency, relevance, engagement, AI model |
-| How do you scale for viral users? | partitioning, async fanout, queueing |
-| How do you handle stale feed data? | invalidation, TTL, feed versioning |
-| How do you personalize the feed? | user embeddings, features, A/B tests |
+| Interview Question                               | Direct answer outline                                                                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Design a news feed (Twitter/Instagram)           | Use a hybrid feed: global post store, follower graph, hot-user push, cold-user pull, cache first page, rank by relevance and freshness     |
+| Fanout on write vs on read — trade-offs          | Push is fast to read but expensive to write; pull is cheap to write but slow to read; choose based on user activity and creator popularity |
+| How do you handle a celebrity with 50M followers | Avoid pushing to every follower timeline; use hot-content candidate generation, shared post store, read-time ranking, and cache warming    |
+| How would you rank a personalized feed           | Combine recency, affinity, engagement, novelty, user history, diversity, and quality in a score or ML model                                |
+| Design Instagram / a photo-sharing feed          | Keep media in object storage, timeline in memory, ranking model scores candidate posts, CDN serves images and videos                       |
+| How do you keep feed reads under 100ms           | Cache first page, precompute active-user timelines, use Redis, fanout only hot items, and avoid full scans for each request                |
+| Design a feed ranking / recommendation system    | Candidate generation -> ranking -> post-filtering -> top N results -> cache and feedback loop                                              |
+
+### Interview answer: design a news feed
+
+A strong answer should start with the feed shape and constraints.
+
+- Users expect fresh, personalized content.
+- The system must support follower graphs and high read traffic.
+- Scaling needs to handle viral creators and a large number of writes.
+- Feed quality depends on ranking, not just storage.
+
+Typical architecture:
+
+1. Store post data in a durable post store.
+2. Maintain a follow graph and user-to-follower indexing.
+3. For hot creators or active users, push posts to precomputed timelines.
+4. For cold or inactive users, pull candidate posts and rank on read.
+5. Cache the first page and top-ranked results in Redis or a memory store.
+6. Use a two-stage ranking pipeline to generate and score candidates.
+
+This gives both low latency and quality.
+
+### Interview answer: fanout on write vs fanout on read
+
+If you need the deepest possible answer, state this clearly:
+
+- Write fanout is best when users are active and read the feed often.
+- Read fanout is best when the feed is sparse or the user relationship graph is small.
+- Hybrid is usually the real solution.
+
+In one sentence:
+
+> Fanout on write trades write cost for faster reads; fanout on read trades read latency for cheaper writes.
+
+### Interview answer: celebrity problem
+
+The celebrity problem means a single very popular user creates too much work for the feed system.
+
+A good answer includes:
+
+- do not duplicate the same post into every follower feed immediately
+- keep the post in the global store
+- create a hot-content candidate stream for trending or popular creators
+- rank at read time using user affinity and relevance
+- cache the resulting feed page for quick access
+
+This prevents the system from becoming write-bound on a single viral event.
+
+### Interview answer: ranking a personalized feed
+
+Use a scoring function or model. At minimum, explain:
+
+- recency
+- user affinity
+- engagement
+- diversity
+- content quality
+- freshness vs spam control
+
+A good system often uses:
+
+- hand-written score as a baseline
+- machine-learned ranker for final ordering
+- re-rank or adjust for diversity and fairness
+
+### Interview answer: design Instagram / photo-sharing feed
+
+For a photo-sharing product, the design usually includes:
+
+- object storage for images and videos
+- metadata table for users, posts, likes, comments, and shares
+- timeline cache for hot users
+- CDN for image/video delivery
+- feed ranking based on engagement and relevance
+- follow graph and content recommendation layer
+
+The key difference from a text feed is media delivery and CDN caching.
+
+### Interview answer: keep read latency under 100ms
+
+Common strategies:
+
+- cache the first page of each feed
+- keep the home timeline in Redis or memory
+- precompute for active users, lazy load for cold users
+- use a candidate set instead of full follower scans
+- rank only top N candidates
+- use read-through caching and version-aware invalidation
+
+### Interview answer: feed ranking / recommendation system
+
+The most commonly accepted design is a two-stage pipeline:
+
+- Candidate generation: fetch likely posts from the user graph, trends, and recommendations.
+- Ranking: score each candidate and return the top N items.
+
+Then apply:
+
+- freshness weighting
+- diversity filters
+- spam and quality penalties
+- user-specific and global engagement signals
+
+This is the model used by most modern recommendation systems.
 
 ---
 
 ## 15. Trade-off summary
 
-| Topic | Fanout on write | Fanout on read |
-| --- | --- | --- |
-| Read latency | Very low | Higher |
-| Write cost | High | Lower |
-| Storage cost | Higher | Lower |
-| Good for viral users | Yes | Harder |
+| Topic                | Fanout on write       | Fanout on read     |
+| -------------------- | --------------------- | ------------------ |
+| Read latency         | Very low              | Higher             |
+| Write cost           | High                  | Lower              |
+| Storage cost         | Higher                | Lower              |
+| Good for viral users | Yes                   | Harder             |
 | Feed personalization | Good with extra logic | Naturally flexible |
-| Complexity | Complex write path | Complex read path |
+| Complexity           | Complex write path    | Complex read path  |
 
 ---
 

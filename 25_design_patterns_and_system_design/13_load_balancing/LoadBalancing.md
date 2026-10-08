@@ -322,3 +322,154 @@ For interviews, explain these concepts clearly:
 - Health checks are necessary for safe and automatic failover.
 - Auto scaling is key for handling variable user load.
 - AI helps draft architecture, but engineering judgment still decides the final design.
+
+### Asked in real interviews
+
+Load balancing appears in system-design rounds from warm-up questions to production architecture discussions.
+
+| Interview question |
+| --- |
+| Design a load balancer for a global service. |
+| Compare Layer 4 and Layer 7 load balancing. |
+| How do you remove a failing server from rotation? |
+| How would you autoscale under a traffic spike? |
+| Round robin vs least connections: when would you use each? |
+| Are sticky sessions a good idea? Why or why not? |
+| What is a reverse proxy, and why use Nginx? |
+
+### Interview design: scalable load-balanced service
+
+Start with the requirements: HTTP or TCP traffic, expected throughput, latency target, regions, availability, TLS termination, session behavior, and whether routing must inspect application content. Then describe the request path and failure behavior.
+
+```mermaid
+flowchart LR
+    U[Clients] --> DNS[Global DNS or Anycast]
+    DNS --> EDGE[Regional L4 or L7 Load Balancer]
+    EDGE --> PROXY[Reverse Proxy / Nginx]
+    PROXY --> HC{Healthy backend?}
+    HC -->|yes| APP[Stateless App Instances]
+    HC -->|no| REMOVE[Remove from rotation]
+    APP --> DATA[(Shared database / cache)]
+    METRICS[Metrics: latency, errors, CPU, requests] --> ASG[Autoscaling Group]
+    ASG --> APP
+    APP --> METRICS
+```
+
+Recommended request path:
+
+1. Global DNS or Anycast directs users to a healthy, nearby region.
+2. A regional load balancer accepts connections and distributes them across healthy proxy or application instances.
+3. An L7 reverse proxy terminates TLS and routes HTTP requests by host, path, or header where needed.
+4. Stateless application instances use shared databases, caches, and session storage so requests can move between instances.
+5. Health checks remove unhealthy instances; metrics drive autoscaling, while connection draining lets in-flight requests finish during scale-in or deployment.
+
+For a TCP service with no need for HTTP-aware routing, use L4 to reduce processing overhead. For web APIs that need path routing, TLS termination, or request policy, use L7. Many deployments combine both at different layers.
+
+### Interview answers and design notes
+
+#### 1. What does a load balancer do?
+
+A load balancer is the stable entry point that selects a backend for each connection or request. It improves capacity use and availability, but it does not make a stateful or unhealthy application automatically reliable. The backend pool, health policy, timeouts, retries, and shared state must also be designed.
+
+#### 2. Layer 4 vs Layer 7: how do you choose?
+
+L4 routes using network and transport information such as IP addresses, ports, and TCP/UDP connections. It is efficient and fits non-HTTP protocols or simple pass-through traffic. L7 understands application protocols such as HTTP and can route by host, URL path, headers, or cookies, but inspecting requests adds work and configuration complexity.
+
+Choose the simplest layer that meets the routing and policy requirements. For example, use L4 for a TCP database proxy or game protocol; use L7 for `/api` versus `/images` routing, HTTP redirects, or cookie-aware behavior. TLS can terminate at either layer depending on the product and security design.
+
+#### 3. Which routing algorithm should you use?
+
+| Algorithm | Choose it when | Main limitation |
+| --- | --- | --- |
+| Round robin | Instances have similar capacity and request cost | Does not account for active work or server differences |
+| Weighted round robin | Instances have known, stable capacity differences | Static weights can lag changing load |
+| Least connections | Request durations vary and active connection count is meaningful | Connections are only an approximate measure of work |
+| Least response time | Latency is a useful signal and measurements are reliable | Can overreact to noisy or short-lived samples |
+| IP hash | A temporary compatibility need requires source-IP affinity | Uneven distribution, NAT concentration, and poor failover behavior |
+
+Round robin is a good baseline. Use least connections when long-lived or uneven-duration connections make simple rotation unbalanced. For CPU-heavy or highly variable requests, use measured load or queue depth where the balancer can obtain a trustworthy signal.
+
+The runnable [round-robin example](RoundRobinLoadBalancerExample.java) prints its routing sequence. The [least-connections example](LeastConnectionsLoadBalancerExample.java) demonstrates selecting the backend with the fewest in-flight requests and releasing the connection when work completes.
+
+Compile and run the least-connections example from this folder:
+
+```powershell
+javac LeastConnectionsLoadBalancerExample.java
+java LeastConnectionsLoadBalancerExample
+```
+
+Example dry run:
+
+```text
+Request 1 -> server-1
+Request 2 -> server-2
+Request 3 -> server-3
+Request 4 after server-1 completes -> server-1
+```
+
+Each `Lease` represents one in-flight request. Call `close()` when that request completes so its active count is decremented; `close()` is idempotent. This is an educational in-process simulation, not a production distributed load balancer: a real balancer must also track health, weights, connection failures, and state consistently across its instances.
+
+#### 4. What is a reverse proxy, and why use Nginx?
+
+A reverse proxy receives requests on behalf of backend services. Nginx can terminate TLS, serve static content, set forwarding headers, route requests to an upstream pool, and apply connection or request limits. It keeps backend addresses private and centralizes common edge behavior. It is not automatically a global load balancer or an application health system; those capabilities depend on the deployment and edition.
+
+Example upstream configuration:
+
+```nginx
+upstream app_servers {
+    least_conn;
+    server 10.0.0.11:8080 max_fails=3 fail_timeout=10s;
+    server 10.0.0.12:8080 max_fails=3 fail_timeout=10s;
+    keepalive 64;
+}
+
+server {
+    listen 443 ssl;
+    server_name example.com;
+
+    location /api/ {
+        proxy_pass http://app_servers;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+In open-source Nginx, `max_fails` and `fail_timeout` provide passive failure handling based on observed upstream errors. Active periodic health checks are an Nginx Plus feature or can be provided by an orchestrator or external load balancer. Configure trusted proxy boundaries carefully so clients cannot spoof forwarded IP headers.
+
+#### 5. How should health checks remove and restore a server?
+
+Use a lightweight liveness check to determine whether the process can respond, and a readiness check to determine whether it should receive production traffic. A readiness check can verify essential dependencies, but should not fail merely because an optional dependency is unavailable.
+
+Set a timeout, interval, and failure threshold to avoid reacting to one transient delay. After repeated failures, stop assigning new requests and alert. When checks pass consistently again, reintroduce the instance gradually. During deployment or scale-in, stop new assignments first and drain existing connections. Keep retries bounded and avoid retrying non-idempotent operations without an idempotency strategy.
+
+#### 6. How do autoscaling groups respond to a traffic spike?
+
+An autoscaling group maintains minimum, desired, and maximum instance counts. Scale-out can use request count per instance, queue depth, CPU, or latency; scale-in should use sustained low demand and a stabilization window to avoid oscillation. Capacity takes time to boot, so combine predictive or scheduled capacity for known peaks with reactive policies and a queue or rate limit to absorb sudden bursts. Ensure new instances pass readiness checks before receiving traffic.
+
+#### 7. Are sticky sessions a good idea?
+
+Sticky sessions keep a client mapped to the same backend, often using a cookie or source-IP hash. They can help legacy applications that store session state only in process memory, but create uneven load, reduce failover flexibility, and make deployments harder. Prefer stateless application instances with sessions in a shared store. Use stickiness only when required, keep session state recoverable, and define what happens when the selected instance fails.
+
+For source-IP affinity in open-source Nginx, an upstream can use `ip_hash` instead of `least_conn`:
+
+```nginx
+upstream app_servers {
+    ip_hash;
+    server 10.0.0.11:8080;
+    server 10.0.0.12:8080;
+}
+```
+
+This is an alternative policy, not an additional directive to combine with the earlier `least_conn` example. Many clients behind one NAT address may concentrate on one backend, and a backend change can remap clients, so IP affinity is not a substitute for shared session storage.
+
+#### 8. How do you prevent a load balancer from becoming a single point of failure?
+
+Run redundant balancer instances across availability zones or use a managed highly available service. Provide a stable entry point through Anycast, DNS failover, or a virtual IP, and verify the failover path rather than assuming it works. Keep configuration consistent, monitor control-plane and data-plane health separately, and test zone and regional failure scenarios.
+
+### Short interview response
+
+I would first clarify protocol, traffic, latency, availability, and routing needs. I would put a highly available regional load balancer in front of stateless instances, use L4 for efficient connection routing or L7 when HTTP-aware rules are needed, and choose round robin for similar instances or least connections for uneven request durations. Readiness checks, bounded timeouts, connection draining, and autoscaling protect the backend during failures and demand changes. I would avoid sticky sessions by storing session state externally unless a legacy constraint requires affinity.
