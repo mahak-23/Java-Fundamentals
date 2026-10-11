@@ -17,6 +17,8 @@ A good file-storage design must answer these questions:
 - how do we serve files quickly across regions?
 - how do we handle failures, retries, and partial uploads?
 
+For the expanded HLD/LLD, UML class model, upload/download flows, and runnable Java metadata/object-store demo, see [FileStorage_v2.md](FileStorage_v2.md) and [FileStorageDemo.java](FileStorageDemo.java).
+
 ---
 
 ### Object storage vs block storage

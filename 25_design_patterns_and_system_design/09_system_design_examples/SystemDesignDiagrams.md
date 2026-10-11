@@ -180,6 +180,78 @@ sequenceDiagram
     API-->>User: 200 OK + JSON
 ```
 
+## UML class diagrams
+
+The architecture flowcharts above show deployable components and data flow. Class diagrams below show the object model and code-level responsibilities.
+
+### URL shortener LLD
+
+```mermaid
+classDiagram
+    class UrlMapping {
+        +shortCode: String
+        +longUrl: String
+        +createdAt: Instant
+    }
+    class UrlService {
+        +createShortUrl(longUrl)
+        +resolve(shortCode)
+    }
+    class UrlRepository {
+        +save(mapping)
+        +findByCode(code)
+    }
+    class UrlCache {
+        +get(code)
+        +put(code, longUrl)
+    }
+    UrlService ..> UrlMapping : creates
+    UrlService --> UrlCache : checks first
+    UrlService --> UrlRepository : loads on cache miss
+    UrlRepository "1" o-- "0..*" UrlMapping : stores
+```
+
+`UrlService` coordinates the lookup. `UrlMapping` is the data record. The cache is an optimization; the repository remains the durable source of truth.
+
+### Chat system LLD
+
+```mermaid
+classDiagram
+    class User {
+        +userId: String
+    }
+    class Conversation {
+        +conversationId: String
+        +participantIds: Set~String~
+    }
+    class Message {
+        +messageId: String
+        +senderId: String
+        +text: String
+        +createdAt: Instant
+    }
+    class ChatService {
+        +sendMessage(sender, conversation, text)
+    }
+    class MessageStore {
+        +save(message)
+        +listRecent(conversationId)
+    }
+    class PresenceService {
+        +isOnline(userId)
+    }
+    class NotificationQueue {
+        +enqueue(message)
+    }
+    Conversation "1" *-- "0..*" Message : contains
+    Conversation "1" o-- "2..*" User : participants
+    ChatService --> MessageStore : persists
+    ChatService --> PresenceService : checks recipient
+    ChatService --> NotificationQueue : queues offline delivery
+```
+
+Read each diagram by starting at the service: it coordinates other objects but does not own every data store or external provider.
+
 ### What to explain in interviews using diagrams
 
 When you present a design diagram, explain:

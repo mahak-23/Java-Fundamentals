@@ -389,6 +389,40 @@ Choose the simplest layer that meets the routing and policy requirements. For ex
 
 Round robin is a good baseline. Use least connections when long-lived or uneven-duration connections make simple rotation unbalanced. For CPU-heavy or highly variable requests, use measured load or queue depth where the balancer can obtain a trustworthy signal.
 
+### UML class diagram: backend selection
+
+```mermaid
+classDiagram
+    class RoundRobinLoadBalancerExample {
+        -servers: List~String~
+        -nextIndex: AtomicInteger
+        +nextServer()
+    }
+    class LeastConnectionsLoadBalancerExample {
+        -backends: List~Backend~
+        +acquire()
+    }
+    class Backend {
+        -name: String
+        +activeRequests: int
+    }
+    class Lease {
+        -backend: Backend
+        +close()
+        +serverName()
+    }
+    LeastConnectionsLoadBalancerExample "1" *-- "1..*" Backend : tracks
+    LeastConnectionsLoadBalancerExample ..> Lease : returns per request
+    Lease --> Backend : releases active request on close
+```
+
+#### Beginner code walkthrough
+
+- [RoundRobinLoadBalancerExample.java](RoundRobinLoadBalancerExample.java) stores the server list and a next-index counter. For each request, it reads the current index, advances it modulo the list size, and returns that server.
+- [LeastConnectionsLoadBalancerExample.java](LeastConnectionsLoadBalancerExample.java) chooses the backend with the fewest active requests. Its lease represents one in-flight request; closing the lease reduces the active count.
+
+The examples are standalone in-memory demonstrations. Real balancers also check health, handle weights and connection draining, and must coordinate shared state if routing decisions span multiple instances.
+
 The runnable [round-robin example](RoundRobinLoadBalancerExample.java) prints its routing sequence. The [least-connections example](LeastConnectionsLoadBalancerExample.java) demonstrates selecting the backend with the fewest in-flight requests and releasing the connection when work completes.
 
 Compile and run the least-connections example from this folder:

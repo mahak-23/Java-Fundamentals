@@ -14,6 +14,31 @@ Paid 500 using Credit Card
 
 `PaymentProcessor` delegates to the injected `PaymentStrategy`, so another payment method can be selected without changing the processor.
 
+UML class view:
+
+```mermaid
+classDiagram
+	class PaymentStrategy {
+		<<interface>>
+		+pay(amount)
+	}
+	class CreditCardPayment {
+		+pay(amount)
+	}
+	class PayPalPayment {
+		+pay(amount)
+	}
+	class PaymentProcessor {
+		-strategy: PaymentStrategy
+		+process(amount)
+	}
+	PaymentStrategy <|.. CreditCardPayment
+	PaymentStrategy <|.. PayPalPayment
+	PaymentProcessor o--> PaymentStrategy : delegates to
+```
+
+Beginner walkthrough: `main` constructs a card strategy and passes it into `PaymentProcessor`. `process(500)` calls `strategy.pay(500)`, so the processor does not need to know card-specific steps. Replacing the injected object with `PayPalPayment` changes the behavior without changing `PaymentProcessor`.
+
 Use when:
 - multiple algorithms can be swapped at runtime
 

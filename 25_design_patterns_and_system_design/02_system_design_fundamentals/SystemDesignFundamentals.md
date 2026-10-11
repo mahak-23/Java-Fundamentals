@@ -226,6 +226,35 @@ Example:
 
 - A browser sends an HTTP request to a backend server. The server checks the user, reads database data, and returns JSON.
 
+#### UML class diagram: authorized cache-aside read
+
+```mermaid
+classDiagram
+	class User {
+		+id: String
+		+roles: List~Role~
+	}
+	class AuthorizationService {
+		+canAccess(user, action)
+	}
+	class ProductService {
+		+getProduct(user, productId)
+	}
+	class CacheStore {
+		+get(key)
+		+put(key, value)
+	}
+	class ProductDatabase {
+		+getProduct(productId)
+	}
+	ProductService --> AuthorizationService : checks permission
+	ProductService --> CacheStore : checks cache first
+	ProductService --> ProductDatabase : reads on cache miss
+	User --> ProductService : requests product
+```
+
+The runnable [SystemDesignFundamentalsExample.java](SystemDesignFundamentalsExample.java) follows this diagram. Read `ProductService.getProduct` top to bottom: authorize first, look in cache, read the database only on a miss, then fill the cache. The second request is a cache hit; a viewer is rejected from creating an order. The example uses in-memory maps, not production authentication or shared infrastructure.
+
 ### Monolithic vs microservices
 
 #### Monolithic

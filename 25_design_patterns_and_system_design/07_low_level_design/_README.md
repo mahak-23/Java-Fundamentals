@@ -37,6 +37,69 @@ Booking BK-G1-<generated> -> Ava / R101 / CONFIRMED
 Booking BK-G2-<generated> -> Ishaan / R102 / CONFIRMED
 ```
 
+### UML class diagrams for the runnable examples
+
+Parking lot:
+
+```mermaid
+classDiagram
+   class ParkingLotVehicle {
+      +id: String
+      +type: VehicleType
+   }
+   class ParkingSlot {
+      +slotNumber: int
+      +allowedType: VehicleType
+      +isAvailable()
+      +park(vehicle)
+      +unpark()
+   }
+   class ParkingTicket {
+      +ticketId: String
+      +vehicleId: String
+      +slotNumber: int
+   }
+   class ParkingLotService {
+      +parkVehicle(vehicle)
+      +unparkVehicle(ticketId)
+   }
+   ParkingLotService --> ParkingSlot : finds and allocates
+   ParkingSlot "1" --> "0..1" ParkingLotVehicle : occupies
+   ParkingLotService ..> ParkingTicket : issues
+```
+
+Hotel booking:
+
+```mermaid
+classDiagram
+   class Guest {
+      +guestId: String
+      +name: String
+   }
+   class Room {
+      +roomId: String
+      +roomType: RoomType
+      +pricePerNight: decimal
+   }
+   class Booking {
+      +bookingId: String
+      +checkIn: LocalDate
+      +checkOut: LocalDate
+      +status: BookingStatus
+      +cancel()
+   }
+   class HotelBookingService {
+      +createBooking(guest, dates, roomType)
+      +findAvailableRoom(dates, roomType)
+   }
+   Guest "1" --> "0..*" Booking : makes
+   Room "1" --> "0..*" Booking : reserved over dates
+   HotelBookingService --> Booking : creates
+   HotelBookingService --> Room : checks availability
+```
+
+In both diagrams, entity objects hold the domain data; the service performs the workflow and validation. Follow the corresponding Java example to see these calls run in order. The parking sample simplifies ticket lookup on exit, and the hotel sample uses in-memory collections, so neither demonstrates production persistence or cross-server concurrency control.
+
 ## Typical LLD questions
 
 - Design a `ParkingLot` with slots, vehicles, and ticketing

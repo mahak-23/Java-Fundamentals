@@ -10,6 +10,33 @@ Use when:
 Example:
 - a legacy `OldPaymentGateway` is adapted to a new `PaymentGateway` interface
 
+Runnable Java example: [StructuralPatternsExample.java](StructuralPatternsExample.java).
+
+```mermaid
+classDiagram
+	class PaymentProcessor {
+		<<interface>>
+		+pay(amount)
+	}
+	class LegacyBankApi {
+		+chargeInCents(cents)
+	}
+	class LegacyBankAdapter {
+		-legacyBank: LegacyBankApi
+		+pay(amount)
+	}
+	PaymentProcessor <|.. LegacyBankAdapter
+	LegacyBankAdapter --> LegacyBankApi : translates and delegates
+```
+
+In the demo, the application asks for `pay(12.50)`. The adapter converts the `BigDecimal` amount to 1250 cents and calls the legacy method. Compile and run with `javac StructuralPatternsExample.java` and `java StructuralPatternsExample`. This demonstrates the Adapter pattern; it is not a real payment integration.
+
+Expected output:
+
+```text
+Legacy bank charged 1250 cents
+```
+
 ## 2. Decorator Pattern
 
 Use when:

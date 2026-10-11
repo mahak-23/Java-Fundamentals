@@ -92,3 +92,33 @@ Common patterns:
 - least-connections
 - IP hash
 - weighted balancing
+
+### UML: connect HLD and LLD
+
+```mermaid
+classDiagram
+	class HLD <<architecture>>
+	class APIGateway <<component>>
+	class OrderService <<component>>
+	class InventoryService <<component>>
+	class OrderDatabase <<database>>
+	class LLD <<implementation>>
+	class Order {
+		+orderId: String
+		+status: OrderStatus
+	}
+	class OrderRepository {
+		+save(order)
+		+findById(orderId)
+	}
+	HLD o-- APIGateway
+	HLD o-- OrderService
+	HLD o-- InventoryService
+	HLD o-- OrderDatabase
+	LLD o-- Order
+	LLD o-- OrderRepository
+	OrderService --> OrderRepository : uses
+	OrderRepository --> OrderDatabase : persists
+```
+
+HLD answers “which major parts exist and how do they connect?” LLD answers “which classes and methods implement one part?” The diagram is illustrative: an order service could be a deployable service in HLD and a Java class/module in LLD.

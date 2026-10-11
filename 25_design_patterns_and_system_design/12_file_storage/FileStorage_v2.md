@@ -1082,6 +1082,62 @@ Use explicit states such as `UPLOADING`, `VERIFYING`, `READY`, and `FAILED`; rea
 
 ### Summary
 
+### UML class diagram: metadata and object bytes
+
+```mermaid
+classDiagram
+    class FileRecord {
+        +fileId: String
+        +ownerId: String
+        +objectKey: String
+        +sizeBytes: long
+        +checksum: String
+        +state: FileState
+    }
+    class UploadSession {
+        +uploadId: String
+        +fileId: String
+        +expiresAt: Instant
+        +state: UploadState
+    }
+    class FilePart {
+        +partNumber: int
+        +objectKey: String
+        +checksum: String
+    }
+    class MetadataRepository {
+        +save(file)
+        +find(fileId)
+    }
+    class ObjectStore {
+        <<interface>>
+        +put(key, bytes)
+        +get(key)
+    }
+    class FileStorageService {
+        +upload(ownerId, name, bytes)
+        +download(requesterId, fileId)
+    }
+    UploadSession "1" *-- "1..*" FilePart : tracks
+    FileStorageService --> MetadataRepository : persists metadata
+    FileStorageService --> ObjectStore : stores bytes
+    FileRecord ..> FilePart : may reference chunks
+```
+
+The runnable [FileStorageDemo.java](FileStorageDemo.java) shows the small-file version of the same boundary: metadata stores owner/key/checksum, object storage stores bytes, and the service authorizes a download and verifies the checksum. Compile with `javac FileStorageDemo.java` and run with `java FileStorageDemo`. It uses in-memory maps, not a real cloud SDK, chunked upload, or presigned URL.
+
+Walkthrough: upload calculates a SHA-256 checksum, saves the bytes under an object key, and saves a separate metadata record. Download looks up the metadata, checks the requesting user against `ownerId`, fetches the object, and recomputes the checksum. The second user's request is rejected before bytes are returned.
+
+Expected output:
+
+```text
+Downloaded: Hello, file storage!
+Checksum: 1bb26b6f8a96732c0a0059f4a51eb97a6d005750162d7d49de6457408bebd7a7
+Other user blocked: Requester does not own this file
+```
+
+### Summary
+
 A strong file storage system design combines:
 
 - scalable object storage

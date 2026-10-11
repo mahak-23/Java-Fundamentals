@@ -2,6 +2,8 @@
 
 Worked HLD examples, diagrams, and Java representations of common architecture designs.
 
+Beginner reading sequence: read the matching problem and diagram first, run the Java example, then trace the printed dry run back to the service calls. These programs use in-memory stand-ins unless the guide says otherwise; they teach boundaries and flow, not production persistence or scale.
+
 ## Design notes
 
 - [System design examples](SystemDesignExamples.md)

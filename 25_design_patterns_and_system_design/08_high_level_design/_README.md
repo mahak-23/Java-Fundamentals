@@ -11,6 +11,29 @@ It answers questions like:
 
 ## HLD concerns
 
+### UML component view
+
+```mermaid
+classDiagram
+   class Client <<component>>
+   class APIGateway <<component>>
+   class AuthService <<component>>
+   class ApplicationService <<component>>
+   class Cache <<datastore>>
+   class Database <<datastore>>
+   class MessageBroker <<infrastructure>>
+   class Worker <<component>>
+   Client --> APIGateway : request
+   APIGateway --> AuthService : authenticate/authorize
+   APIGateway --> ApplicationService : route
+   ApplicationService --> Cache : read hot data
+   ApplicationService --> Database : source of truth
+   ApplicationService --> MessageBroker : async event
+   MessageBroker --> Worker : dispatch work
+```
+
+This is an HLD-level UML view: each box is a deployable or logical component, not a Java class. For runnable examples, start at the [system-design examples index](../09_system_design_examples/_README.md); detailed e-commerce design is in [module 18](../18_e_commerce_system/ECommerceSystem.md).
+
 ### 1. Functional requirements (FR)
 
 What is the system expected to do?
@@ -198,6 +221,10 @@ Design an online shopping platform with product catalog, cart, order placement, 
 - inventory is reserved
 - payment is authorized
 - order is created and notifications are sent
+
+### Detailed design
+
+The dedicated [E-Commerce System Design module](../18_e_commerce_system/ECommerceSystem.md) contains the detailed product catalog, cart, inventory and flash-sale, payment gateway, order lifecycle, consistency, and checkout-flow designs, including HLD, LLD, and diagrams.
 
 ### Critical concerns
 - inventory consistency

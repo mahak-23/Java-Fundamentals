@@ -237,6 +237,56 @@ More advanced patterns include:
 - attribute-based access control (ABAC)
 - policy-based authorization
 
+#### UML class diagram: authentication and RBAC
+
+```mermaid
+classDiagram
+  class Client {
+    +send(token, request)
+  }
+  class AuthenticationService {
+    +authenticate(token)
+  }
+  class TokenVerifier {
+    <<interface>>
+    +verify(token)
+  }
+  class UserPrincipal {
+    +userId: String
+    +roles: Set~Role~
+  }
+  class Role {
+    <<enumeration>>
+    CUSTOMER
+    SUPPORT
+    ADMIN
+  }
+  class AuthorizationService {
+    +requireRole(principal, role)
+    +requireOwner(principal, ownerId)
+  }
+  class ProtectedResource {
+    +ownerId: String
+    +read()
+  }
+  Client --> AuthenticationService : presents token
+  AuthenticationService --> TokenVerifier : verifies signature/claims
+  AuthenticationService --> UserPrincipal : creates trusted identity
+  UserPrincipal "1" --> "1..*" Role : has
+  AuthorizationService --> UserPrincipal : checks permissions
+  AuthorizationService --> ProtectedResource : checks ownership
+```
+
+The dependency-free [AuthenticationAuthorizationDemo.java](AuthenticationAuthorizationDemo.java) separates authentication (verify a token and obtain a principal) from authorization (check role and resource ownership). Its verifier uses a fixed in-memory token map for teaching; it does not parse JWTs or replace an identity provider. The real API must validate signature, issuer, audience, and expiration with a vetted library.
+
+Dry run: a recognized demo token becomes a `UserPrincipal`; the authorization service permits that customer to access their own profile, rejects access to another customer's profile, and allows an admin role. The sample output is:
+
+```text
+Customer authenticated and can read their own profile
+Other user's profile blocked: User cannot access this resource
+Admin authenticated and can manage users
+```
+
 ### Securing APIs
 
 APIs need strong security controls at multiple layers.

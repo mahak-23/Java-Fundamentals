@@ -10,6 +10,43 @@ Example:
 
 - User profile data is read from the cache when hot, else loaded from the DB and cached.
 
+#### UML class diagram: cache-aside
+
+```mermaid
+classDiagram
+	class ProductService {
+		+getProductName(productId)
+	}
+	class ProductCache {
+		+get(productId)
+		+put(productId, name)
+	}
+	class ProductDatabase {
+		+findName(productId)
+	}
+	ProductService --> ProductCache : checks first
+	ProductService --> ProductDatabase : reads on miss
+```
+
+The beginner Java version is [CacheAsideDemo.java](CacheAsideDemo.java). First call: cache miss -> database lookup -> cache fill. Second call: cache hit -> no database lookup. Run it with `javac CacheAsideDemo.java` and `java CacheAsideDemo`; it prints the lookup count so the cache effect is visible. This in-memory example demonstrates the control flow only; a production cache needs expiry, invalidation, shared storage, and a policy for database/cache failures.
+
+Dry run: the first request prints `Cache miss`, reads `P-101` from the database, then stores `Trail Shoes` in cache. The second request prints `Cache hit` and returns the cached name. The final database-read count is `1`.
+
+Expected output from `CacheAsideDemo.java`:
+
+```text
+First request:
+Cache miss for P-101
+Database lookup for P-101
+Trail Shoes
+
+Second request:
+Cache hit for P-101
+Trail Shoes
+
+Database reads: 1
+```
+
 #### Write-through vs write-back
 
 ##### Write-through

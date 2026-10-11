@@ -14,3 +14,8 @@
 | [RateLimitingAlgorithmsExample.java](../15_rate_limiting/RateLimitingAlgorithmsExample.java) | Token bucket, fixed/sliding windows, and leaky bucket with deterministic dry runs |
 | [RoundRobinLoadBalancerExample.java](../13_load_balancing/RoundRobinLoadBalancerExample.java) | Thread-safe round-robin server selection with printed request routing |
 | [LeastConnectionsLoadBalancerExample.java](../13_load_balancing/LeastConnectionsLoadBalancerExample.java) | Least-connections routing with active-request leases and a deterministic dry run |
+| [CacheAsideDemo.java](../11_caching_and_cdn/CacheAsideDemo.java) | Beginner cache miss, database read, cache fill, and later cache hit |
+| [FileStorageDemo.java](../12_file_storage/FileStorageDemo.java) | Metadata/object-store separation, checksum verification, and owner authorization |
+| [AuthenticationAuthorizationDemo.java](../16_authentication_and_authorization/AuthenticationAuthorizationDemo.java) | Token verification boundary, RBAC role checks, and resource ownership |
+| [FeedGenerationDemo.java](../17_feed_generation/FeedGenerationDemo.java) | Fan-out-on-read candidate selection and time-based feed ordering |
+| [StructuralPatternsExample.java](../05_structural_patterns/StructuralPatternsExample.java) | Beginner Adapter example translating a payment interface to a legacy cents API |

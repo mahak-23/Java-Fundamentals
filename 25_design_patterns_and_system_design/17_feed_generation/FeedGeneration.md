@@ -66,6 +66,58 @@ flowchart TD
     K --> L[Final feed response]
 ```
 
+### UML class diagram: feed domain and services
+
+```mermaid
+classDiagram
+    class User {
+        +userId: String
+    }
+    class FollowGraph {
+        +follow(userId, authorId)
+        +getFollowedAuthors(userId)
+    }
+    class Post {
+        +postId: String
+        +authorId: String
+        +createdAt: Instant
+        +content: String
+    }
+    class PostStore {
+        +save(post)
+        +getPostsByAuthors(authorIds)
+    }
+    class TimelineEntry {
+        +userId: String
+        +postId: String
+        +score: double
+    }
+    class FeedService {
+        +buildCandidates(userId)
+        +rank(userId, posts)
+    }
+    class Ranker {
+        <<interface>>
+        +score(userId, post)
+    }
+    User --> FollowGraph : follows creators
+    PostStore "1" o-- "0..*" Post : stores source posts
+    FeedService --> FollowGraph : finds candidate authors
+    FeedService --> PostStore : loads candidate posts
+    FeedService --> Ranker : ranks candidates
+    User "1" --> "0..*" TimelineEntry : receives
+    TimelineEntry "0..*" --> "1" Post : references
+```
+
+The beginner [FeedGenerationDemo.java](FeedGenerationDemo.java) demonstrates **fan-out on read**: it finds followed creators, fetches their posts, sorts by creation time, and returns the first page. Its dry run intentionally includes a post from an unfollowed creator so you can see that it is filtered out. This in-memory example is O(number of stored posts) and does not include pagination cursors, caching, celebrity handling, or ML ranking; those are production extensions discussed below.
+
+In the dry run, `USER-B` follows `CREATOR-A` and `CREATOR-C`; a newer post from `CREATOR-D` is excluded because that author is not followed. The remaining posts are sorted newest first:
+
+```text
+POST-2 from CREATOR-C: New photo
+POST-1 from CREATOR-A: First update
+```
+
 ---
 
 ## 3. Designing Social Feeds

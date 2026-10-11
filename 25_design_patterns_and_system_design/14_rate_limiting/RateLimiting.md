@@ -1,5 +1,34 @@
 ## Rate limiting and abuse protection
 
+> **Numbering note:** This is a legacy copy. The maintained module is [15_rate_limiting/RateLimiting.md](../15_rate_limiting/RateLimiting.md), which contains the UML class diagram, beginner walkthrough, runnable Java implementations, and expected output traces. The older notes below are retained for continuity.
+
+```mermaid
+classDiagram
+    class RateLimitingAlgorithmsExample {
+        +runTokenBucket()
+        +runFixedWindow()
+        +runSlidingWindow()
+        +runLeakyBucket()
+    }
+    class TokenBucket {
+        +allow(nowMillis)
+    }
+    class FixedWindowCounter {
+        +allow(nowMillis)
+    }
+    class SlidingWindowLog {
+        +allow(nowMillis)
+    }
+    class LeakyBucket {
+        +offer(request)
+        +leakOne()
+    }
+    RateLimitingAlgorithmsExample ..> TokenBucket : demonstrates
+    RateLimitingAlgorithmsExample ..> FixedWindowCounter : demonstrates
+    RateLimitingAlgorithmsExample ..> SlidingWindowLog : demonstrates
+    RateLimitingAlgorithmsExample ..> LeakyBucket : demonstrates
+```
+
 ### Rate limiting need
 
 Rate limiting is used to control how many requests a client or user can make in a period of time.
@@ -54,14 +83,14 @@ The server should calculate the retry time from the limiter state, such as the n
 
 Rate limiting is a common system-design warm-up across experience levels. Practice explaining the design, implementation, and trade-offs behind questions such as:
 
-| Interview question |
-| --- |
-| Design a rate limiter for a public API. |
-| Compare token bucket and leaky bucket. |
-| How would you rate-limit across many servers? |
-| What are the trade-offs between per-IP and per-user limits? |
-| How would you implement a sliding-window counter? |
-| What status code and headers should a rejected request return? |
+| Interview question                                                 |
+| ------------------------------------------------------------------ |
+| Design a rate limiter for a public API.                            |
+| Compare token bucket and leaky bucket.                             |
+| How would you rate-limit across many servers?                      |
+| What are the trade-offs between per-IP and per-user limits?        |
+| How would you implement a sliding-window counter?                  |
+| What status code and headers should a rejected request return?     |
 | Why do APIs need rate limiting, and what threats does it mitigate? |
 
 ### Token bucket algorithm
@@ -438,13 +467,13 @@ For interviews, explain rate limiting in terms of:
 
 ### Java implementations
 
-For deterministic algorithm examples with fixed timestamps and printed traces, see [RateLimitingAlgorithmsExample.java](RateLimitingAlgorithmsExample.java).
+For deterministic algorithm examples with fixed timestamps and printed traces, see [RateLimitingAlgorithmsExample.java](../15_rate_limiting/RateLimitingAlgorithmsExample.java).
 
-The complete, deterministic Java demo for token bucket, fixed window, sliding window log, and bounded leaky bucket is [RateLimitingAlgorithmsExample.java](RateLimitingAlgorithmsExample.java). Run it with:
+The complete, deterministic Java demo for token bucket, fixed window, sliding window log, and bounded leaky bucket is [RateLimitingAlgorithmsExample.java](../15_rate_limiting/RateLimitingAlgorithmsExample.java). Run it from this folder with:
 
 ```powershell
-javac RateLimitingAlgorithmsExample.java
-java RateLimitingAlgorithmsExample
+javac -d out ../15_rate_limiting/RateLimitingAlgorithmsExample.java
+java -cp out RateLimitingAlgorithmsExample
 ```
 
 Dry run for the token bucket (capacity 3, refill 1 token/second):

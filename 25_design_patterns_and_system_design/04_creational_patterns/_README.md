@@ -15,6 +15,30 @@ Riding a bike
 
 The client requests each type through `VehicleFactory`; the factory selects the concrete class and the client calls the shared `Vehicle` interface.
 
+UML class view:
+
+```mermaid
+classDiagram
+	class Vehicle {
+		<<interface>>
+		+drive()
+	}
+	class Car {
+		+drive()
+	}
+	class Bike {
+		+drive()
+	}
+	class VehicleFactory {
+		+createVehicle(type)
+	}
+	Vehicle <|.. Car
+	Vehicle <|.. Bike
+	VehicleFactory ..> Vehicle : creates
+```
+
+Beginner reading path: `main` asks the factory for a `Vehicle`; the factory chooses `Car` or `Bike`; the caller invokes the same `drive()` method on either result. This is why the client does not need an `if` statement for each vehicle type.
+
 Use when:
 - you want to centralize object creation
 - the exact class should depend on runtime conditions

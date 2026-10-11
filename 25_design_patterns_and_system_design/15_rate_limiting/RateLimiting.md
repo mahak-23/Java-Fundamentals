@@ -581,3 +581,53 @@ class LeakyBucket {
 ```
 
 These rate-limiting examples show how state and elapsed time determine whether a request is accepted. The round-robin load-balancer implementation is in the [load-balancing module](../13_load_balancing/LoadBalancing.md).
+
+### UML class diagram: limiter strategies
+
+```mermaid
+classDiagram
+    class RateLimitingAlgorithmsExample {
+        +runTokenBucket()
+        +runFixedWindow()
+        +runSlidingWindow()
+        +runLeakyBucket()
+    }
+    class TokenBucket {
+        -capacity: int
+        -tokens: double
+        -refillRate: double
+        +allow(nowMillis)
+    }
+    class FixedWindowCounter {
+        -limit: int
+        -windowStart: long
+        -count: int
+        +allow(nowMillis)
+    }
+    class SlidingWindowLog {
+        -limit: int
+        -requestTimes: Deque
+        +allow(nowMillis)
+    }
+    class LeakyBucket {
+        -capacity: int
+        -queue: Queue
+        +offer(request)
+        +leakOne()
+    }
+    RateLimitingAlgorithmsExample ..> TokenBucket : demonstrates
+    RateLimitingAlgorithmsExample ..> FixedWindowCounter : demonstrates
+    RateLimitingAlgorithmsExample ..> SlidingWindowLog : demonstrates
+    RateLimitingAlgorithmsExample ..> LeakyBucket : demonstrates
+```
+
+#### Beginner walkthrough of the Java demo
+
+Use [RateLimitingAlgorithmsExample.java](RateLimitingAlgorithmsExample.java) for the fixed-time, reproducible run. Each `allow(nowMillis)` method returns `true` when it admits a request and `false` when it rejects one. Passing time as an argument makes refill and window-boundary behavior testable without sleeping.
+
+- Token bucket starts with 3 tokens. The first three requests consume them, the fourth is rejected, and one second later one token refills.
+- Fixed window resets its count at the next exact window boundary; this is simple, but allows boundary bursts.
+- Sliding-window log removes timestamps outside the rolling interval before checking the limit.
+- Leaky bucket queues requests up to capacity; `leakOne()` represents a worker processing one queued request.
+
+The sample keeps state in one process. A distributed limiter needs shared atomic state or a dedicated service, a key such as user ID/IP, and a deliberate fail-open/fail-closed policy.
