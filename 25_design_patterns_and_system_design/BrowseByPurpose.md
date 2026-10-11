@@ -23,6 +23,7 @@ Use this index when you know what you want to practice but not which numbered mo
 - [Authentication and authorization](16_authentication_and_authorization/AuthenticationAndAuthorization.md)
 - [Feed generation and social timelines](17_feed_generation/FeedGeneration.md)
 - [E-commerce system design](18_e_commerce_system/ECommerceSystem.md)
+- [Video streaming](19_video_streaming/VideoStreaming.md)
 
 ## Practice or review
 

@@ -330,6 +330,57 @@ This setup is common because:
 - candidate generation narrows the search space
 - ranking can use personalized, ML-based signals
 
+### Recommendation basics
+
+Recommendation systems answer the same core design question in a different context: "Which content or product should this user likely want next?"
+
+The usual pipeline is:
+
+1. collect user features and item features
+2. generate likely candidates from the user graph, content graph, or past activity
+3. rank candidates using relevance signals
+4. filter spam, repeats, or non-eligible items
+5. diversify and personalize the final result set
+6. cache the top results for hot users and sessions
+
+A simple formula is:
+
+$$
+score = w_1 \times user\_affinity + w_2 \times recency + w_3 \times engagement + w_4 \times novelty - penalty
+$$
+
+Where:
+
+- user affinity measures the strength of the user's interest in the creator or topic
+- recency rewards fresh content
+- engagement measures clicks, watch time, likes, and shares
+- novelty reduces repetitive recommendation loops
+- penalty suppresses spam, low-quality, or low-trust items
+
+### AI pipeline for recommendations
+
+```mermaid
+flowchart LR
+    A[User events + clicks + watch history] --> B[Feature store]
+    B --> C[Candidate generation]
+    C --> D[Ranking model]
+    D --> E[Filter + diversity + freshness]
+    E --> F[Top N recommendations]
+    F --> G[Cache + personalized feed]
+    G --> H[User interaction feedback loop]
+    H --> B
+```
+
+This is the same general pattern used in modern recommendation systems:
+
+- store both user and item signals
+- generate a smaller set of likely candidates
+- rank them with a model
+- re-rank for diversity and business constraints
+- monitor click-through rate, watch time, and quality
+
+The important distinction is that recommendations are usually optimized for engagement and relevance, whereas transactional systems like inventory and payments optimize for correctness and invariants.
+
 ### Practical production pattern
 
 The best feed design usually combines:

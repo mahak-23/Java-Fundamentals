@@ -706,6 +706,93 @@ This is a very important optimization because:
 - it reduces bandwidth cost and server load
 - it scales much better for large media workloads
 
+### Video upload flow, encoding, and transcoding
+
+Video uploads usually follow a different pattern than regular document uploads because the file must be encoded and often converted into multiple bitrate/resolution variants.
+
+```mermaid
+flowchart LR
+    U[User uploads raw video] --> Presign[App issues signed URL]
+    Presign --> Obj[(Object storage)]
+    Obj --> Proc[Upload service / queue]
+    Proc --> Encode[Encoding workers]
+    Encode --> Transcode[Transcoding to H264/H265 + multiple bitrates]
+    Transcode --> Manifest[HLS/DASH manifest + chunks]
+    Manifest --> CDN[CDN / edge cache]
+    CDN --> Player[Video player]
+```
+
+#### Encoding and transcoding
+
+Encoding is the process of turning a raw source video into a compressed, playable format. Common outputs are:
+
+- MP4 / H.264 / H.265
+- adaptive bitrate streams for different screen sizes and bandwidths
+- thumbnails and preview images
+- subtitles and chapters
+
+Transcoding means generating additional variants from the original source, such as:
+
+- 480p, 720p, 1080p, 4K
+- bitrate-specific profiles for mobile, tablet, and desktop
+- language-specific audio tracks or subtitles
+
+A common production flow is:
+
+1. Client uploads a raw video or source file.
+2. Storage service stores the original object.
+3. An async job queue triggers transcoding workers.
+4. Encoders generate multiple renditions and manifests.
+5. CDN caches the final segments and serves them to the viewer.
+
+#### Streaming protocols
+
+Video delivery usually uses a streaming protocol rather than raw file download.
+
+- HLS (HTTP Live Streaming): common for Apple devices and browser playback; uses playlists and segments.
+- DASH (Dynamic Adaptive Streaming over HTTP): open standard for adaptive bitrate streaming.
+- WebRTC: used for low-latency live video and conferencing.
+- RTMP or RTSP: still common in older live-streaming pipelines, though HTTP-based protocols are increasingly dominant.
+
+The main idea is adaptation:
+
+- the player measures bandwidth and CPU
+- it switches to a lower or higher bitrate segment automatically
+- the viewer gets smoother playback without buffering too often
+
+#### Chunked streaming and progressive delivery
+
+Large video files are split into small segments rather than delivered as one huge byte stream.
+
+Benefits:
+
+- partial download and resume support
+- better recovery from connection issues
+- smaller latency for live playback
+- easier cache invalidation and CDN offload
+
+Typical flow:
+
+- source file is segmented into 2–10 second chunks
+- each chunk is stored with a manifest and metadata
+- player fetches the next chunk sequentially or based on network quality
+- if a segment fails, the client retries only that segment
+
+This is the same principle behind chunked upload and chunked streaming in distributed systems: split the job into independent units that can fail independently and be retried without redoing the entire upload.
+
+#### Practical rule for media systems
+
+A good media system usually has:
+
+- direct upload or signed URL upload for large source files
+- storage for original video and processed variants
+- queue-based transcoding jobs
+- chunked or segmented output for streaming
+- CDN and edge caching for playback
+- metadata service for thumbnails, playback URLs, and access control
+
+This design makes the system more scalable than placing raw video bytes on app servers or streaming one massive file directly from origin storage.
+
 #### Server-side signed URL example
 
 ```javascript
