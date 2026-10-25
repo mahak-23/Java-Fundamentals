@@ -1,6 +1,10 @@
-# Exception Handling
+# exception_handling
 
-Exception handling lets your Java program respond to errors without crashing unexpectedly. It is essential when reading input, parsing data, or dealing with user actions.
+> **Prerequisites:** [01_java_basics](../01_java_basics/_README.md)
+
+In simple terms: when something goes wrong at runtime (bad input, division by zero, missing file), Java throws an **exception**. You use `try` / `catch` so the program can handle the error instead of stopping abruptly.
+
+Exception handling is essential when reading input, parsing data, or dealing with user actions.
 
 ## How to create and use exceptions
 
@@ -64,7 +68,18 @@ class InvalidAgeException extends Exception {
 | Throwing an exception | O(1) | O(1) |
 | Propagating exception stack | O(depth) | O(depth) |
 
+## Files
+
+| File | Concept |
+|------|---------|
+| `ExceptionHandlingExample.java` | try-catch-finally, common exceptions |
+| `CustomExceptionExample.java` | Custom exceptions, `throw`, `throws` |
+
 ## Interview notes
 - Checked exceptions must be handled or declared; unchecked exceptions usually extend `RuntimeException`.
 - `throw` triggers an exception immediately; `throws` announces the possibility.
 - `finally` is useful for closing streams, files, and database resources.
+
+## Next module
+
+→ [03_oops/_README.md](../03_oops/_README.md)

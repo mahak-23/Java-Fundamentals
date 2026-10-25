@@ -23,6 +23,7 @@ This folder contains focused notes for system design, architecture, algorithms, 
 17. [Feed generation and social timelines](17_feed_generation/FeedGeneration.md)
 18. [E-commerce system design](18_e_commerce_system/ECommerceSystem.md)
 19. [Video streaming](19_video_streaming/VideoStreaming.md)
+20. [Observability](20_observability/Observability.md)
 
 ## Browse by purpose
 

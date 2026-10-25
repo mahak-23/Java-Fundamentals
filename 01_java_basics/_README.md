@@ -144,4 +144,4 @@ public static int add(int x, int y) {
 
 ## Next module
 
-→ [03_oops/_README.md](../03_oops/_README.md)
+→ [02_exception_handling/_README.md](../02_exception_handling/_README.md)

@@ -19,3 +19,5 @@
 | [AuthenticationAuthorizationDemo.java](../16_authentication_and_authorization/AuthenticationAuthorizationDemo.java) | Token verification boundary, RBAC role checks, and resource ownership |
 | [FeedGenerationDemo.java](../17_feed_generation/FeedGenerationDemo.java) | Fan-out-on-read candidate selection and time-based feed ordering |
 | [StructuralPatternsExample.java](../05_structural_patterns/StructuralPatternsExample.java) | Beginner Adapter example translating a payment interface to a legacy cents API |
+| [ApplicationHealthCheck.java](../20_observability/ApplicationHealthCheck.java) | Liveness vs readiness; dependency checks belong on readiness |
+| [ObservabilityDemo.java](../20_observability/ObservabilityDemo.java) | Structured JSON logs, span/trace IDs, and golden-signal-style counters |
