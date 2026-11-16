@@ -13,10 +13,11 @@ package dynamic_programming;
  *   1) Fibonacci / staircase counting
  *   2) Unbounded / 0/1 knapsack
  *   3) Coin change
- *   4) LIS / longest increasing subsequence
- *   5) Edit distance
- *   6) House robber / non-adjacent choice
- *   7) Subset sum / partition
+ *   4) LIS / longest increasing subsequence (O(n^2) and O(n log n))
+ *   5) LCS / longest common subsequence
+ *   6) Edit distance
+ *   7) House robber / non-adjacent choice
+ *   8) Subset sum / partition
  *
  * TWO STYLES:
  *   Top-down (memoization): recursive + cache
@@ -25,7 +26,8 @@ package dynamic_programming;
  * COMPLEXITY:
  *   Fibonacci: O(n)
  *   Knapsack: O(n * W)
- *   LIS: O(n^2)
+ *   LIS: O(n^2) or O(n log n)
+ *   LCS: O(m * n)
  *   Edit Distance: O(m * n)
  * =============================================================================
  */
@@ -139,6 +141,21 @@ public class DynamicProgrammingExample {
         return memo[i][w];
     }
 
+    // Unbounded Knapsack — each item can be selected multiple times.
+    // Ascending capacities allow the current item to be reused in the same row.
+    // Complexity: O(n * W) time, O(W) space
+    public static int unboundedKnapsack(int[] weights, int[] values, int capacity) {
+        int[] dp = new int[capacity + 1];
+        for (int item = 0; item < weights.length; item++) {
+            for (int currentCapacity = weights[item]; currentCapacity <= capacity; currentCapacity++) {
+                dp[currentCapacity] = Math.max(
+                        dp[currentCapacity],
+                        values[item] + dp[currentCapacity - weights[item]]);
+            }
+        }
+        return dp[capacity];
+    }
+
     // LIS — longest increasing subsequence
     // dp[i] = LIS length ending at index i
     // Recurrence: dp[i] = 1 + max(dp[j]) for j < i and nums[j] < nums[i]
@@ -161,6 +178,30 @@ public class DynamicProgrammingExample {
         return best;
     }
 
+    // LIS via patience sorting: tails[i] is the smallest tail for length i + 1.
+    // Binary search keeps the algorithm O(n log n) time and O(n) space.
+    public static int lisNLogN(int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        int[] tails = new int[nums.length];
+        int length = 0;
+
+        for (int number : nums) {
+            int left = 0;
+            int right = length;
+            while (left < right) {
+                int middle = left + (right - left) / 2;
+                if (tails[middle] < number) {
+                    left = middle + 1;
+                } else {
+                    right = middle;
+                }
+            }
+            tails[left] = number;
+            if (left == length) length++;
+        }
+        return length;
+    }
+
     // House Robber
     // dp[i] = max money from first i houses
     // Recurrence: dp[i] = max(dp[i-1], nums[i] + dp[i-2])
@@ -178,6 +219,23 @@ public class DynamicProgrammingExample {
         }
 
         return dp[nums.length - 1];
+    }
+
+    // LCS — longest common subsequence of two strings
+    // dp[i][j] = LCS length for the first i and j characters
+    // Complexity: O(m * n) time and space
+    public static int lcs(String first, String second) {
+        int[][] dp = new int[first.length() + 1][second.length() + 1];
+        for (int i = 1; i <= first.length(); i++) {
+            for (int j = 1; j <= second.length(); j++) {
+                if (first.charAt(i - 1) == second.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[first.length()][second.length()];
     }
 
     // Edit Distance — minimum operations to convert one string to another
@@ -215,8 +273,12 @@ public class DynamicProgrammingExample {
         int[] values = {1, 4, 5, 7};
         System.out.println("Knapsack tab = " + knapsackTab(weights, values, 7));
         System.out.println("Knapsack memo = " + knapsackMemo(weights, values, 7));
+        System.out.println("Unbounded knapsack = " + unboundedKnapsack(new int[]{2}, new int[]{3}, 6));
 
-        System.out.println("LIS = " + lis(new int[]{10, 9, 2, 5, 3, 7, 101, 18}));
+        int[] sequence = {10, 9, 2, 5, 3, 7, 101, 18};
+        System.out.println("LIS O(n^2) = " + lis(sequence));
+        System.out.println("LIS O(n log n) = " + lisNLogN(sequence));
+        System.out.println("LCS = " + lcs("ABCBDAB", "BDCABA"));
         System.out.println("House robber = " + houseRobber(new int[]{2, 7, 9, 3, 1}));
         System.out.println("Edit distance = " + editDistance("kitten", "sitting"));
     }

@@ -6,33 +6,36 @@ This workspace is organized by topic and covers Java fundamentals, object-orient
 
 ## Learning roadmap
 
-| #   | Folder                                                                        | Focus                                                      |
-| --- | ----------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| 01  | [01_java_basics](01_java_basics/)                                             | Java syntax, variables, operators, control flow, methods   |
-| 02  | [02_exception_handling](02_exception_handling/)                               | Exceptions, handling errors, defensive coding              |
-| 03  | [03_oops](03_oops/)                                                           | Classes, objects, inheritance, polymorphism, encapsulation |
-| 04  | [04_interfaces](04_interfaces/)                                               | Interfaces, abstraction, contracts, functional interfaces  |
-| 05  | [05_streams_and_lambdas](05_streams_and_lambdas/)                             | Streams, lambdas, functional style                         |
-| 06  | [06_regex](06_regex/)                                                         | Regex and text processing                                  |
-| 07  | [07_jvm_jdk](07_jvm_jdk/)                                                     | JVM internals, JDK, runtime model                          |
-| 08  | [08_collections](08_collections/)                                             | Lists, sets, maps, collection APIs                         |
-| 09  | [09_arrays](09_arrays/)                                                       | Arrays, matrices, patterns, prefix sums                    |
-| 10  | [10_strings](10_strings/)                                                     | Strings, manipulation, formatting, immutability            |
-| 11  | [11_stack](11_stack/)                                                         | Stacks, bracket matching, DFS support                      |
-| 12  | [12_queue](12_queue/)                                                         | Queues, BFS, sliding window                                |
-| 13  | [13_linkedlist](13_linkedlist/)                                               | Linked lists, reversing, cycle detection                   |
-| 14  | [14_hashmaps_and_hashsets](14_hashmaps_and_hashsets/)                         | Hashing, collisions, hash set/map internals                |
-| 15  | [15_trees_and_traversals](15_trees_and_traversals/)                           | Trees, BSTs, balanced trees, traversal                     |
-| 16  | [16_heaps](16_heaps/)                                                         | Heaps, priority queues, heap patterns                      |
-| 17  | [17_tries](17_tries/)                                                         | Tries, prefix matching, dictionary problems                |
-| 18  | [18_graphs](18_graphs/)                                                       | Graph traversal, MST, shortest paths, topological sort     |
-| 19  | [19_greedy_algorithms](19_greedy_algorithms/)                                 | Greedy strategies and proof ideas                          |
-| 20  | [20_dynamic_programming](20_dynamic_programming/)                             | DP states, recurrence, optimization                        |
-| 21  | [21_bit_manipulation](21_bit_manipulation/)                                   | Bitwise operators, masks, XOR, toggling                    |
-| 22  | [22_algorithms_and_patterns](22_algorithms_and_patterns/)                     | Interview patterns and algorithm templates                 |
-| 23  | [23_concurrency_and_multithreading](23_concurrency_and_multithreading/)       | Threads, locks, executors, synchronization                 |
-| 24  | [24_jdbc_and_database_basics](24_jdbc_and_database_basics/)                   | JDBC and database fundamentals                             |
-| 25  | [25_design_patterns_and_system_design](25_design_patterns_and_system_design/) | Design patterns, LLD, HLD, system design prep              |
+| #    | Folder                                                                                 | Focus                                                       |
+| ---  | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| 00   | [00_java_setup_and_environment](00_java_setup_and_environment/)                       | JDK/JRE/JVM setup, compile/run flow, IDE basics             |
+| 00b  | [00b_memory_model_and_references](00b_memory_model_and_references/)                   | Stack vs heap, references, pass-by-value, immutability     |
+| 00c  | [00c_generics_and_string_basics](00c_generics_and_string_basics/)                     | Generics, string equality, StringBuilder, collection safety |
+| 01   | [01_java_basics](01_java_basics/)                                                      | Java syntax, variables, operators, control flow, methods   |
+| 02   | [02_exception_handling](02_exception_handling/)                                        | Exceptions, handling errors, defensive coding              |
+| 03   | [03_oops](03_oops/)                                                                  | Classes, objects, inheritance, polymorphism, encapsulation |
+| 04   | [04_interfaces](04_interfaces/)                                                      | Interfaces, abstraction, contracts, functional interfaces  |
+| 05   | [05_streams_and_lambdas](05_streams_and_lambdas/)                                    | Streams, lambdas, functional style                         |
+| 06   | [06_regex](06_regex/)                                                                | Regex and text processing                                  |
+| 07   | [07_jvm_jdk](07_jvm_jdk/)                                                            | JVM internals, JDK, runtime model                          |
+| 08   | [08_collections](08_collections/)                                                      | Lists, sets, maps, collection APIs                         |
+| 09   | [09_arrays](09_arrays/)                                                              | Arrays, matrices, patterns, prefix sums                    |
+| 10   | [10_strings](10_strings/)                                                            | Strings, manipulation, formatting, immutability            |
+| 11   | [11_stack](11_stack/)                                                                | Stacks, bracket matching, DFS support                      |
+| 12   | [12_queue](12_queue/)                                                                | Queues, BFS, sliding window                                |
+| 13   | [13_linkedlist](13_linkedlist/)                                                      | Linked lists, reversing, cycle detection                   |
+| 14   | [14_hashmaps_and_hashsets](14_hashmaps_and_hashsets/)                                | Hashing, collisions, hash set/map internals                |
+| 15   | [15_trees_and_traversals](15_trees_and_traversals/)                                  | Trees, BSTs, balanced trees, traversal                     |
+| 16   | [16_heaps](16_heaps/)                                                                | Heaps, priority queues, heap patterns                      |
+| 17   | [17_tries](17_tries/)                                                                | Tries, prefix matching, dictionary problems                |
+| 18   | [18_graphs](18_graphs/)                                                              | Graph traversal, MST, shortest paths, topological sort     |
+| 19   | [19_greedy_algorithms](19_greedy_algorithms/)                                        | Greedy strategies and proof ideas                          |
+| 20   | [20_dynamic_programming](20_dynamic_programming/)                                    | DP states, recurrence, optimization                        |
+| 21   | [21_bit_manipulation](21_bit_manipulation/)                                          | Bitwise operators, masks, XOR, toggling                    |
+| 22   | [22_algorithms_and_patterns](22_algorithms_and_patterns/)                            | Interview patterns and algorithm templates                 |
+| 23   | [23_concurrency_and_multithreading](23_concurrency_and_multithreading/)              | Threads, locks, executors, synchronization                 |
+| 24   | [24_jdbc_and_database_basics](24_jdbc_and_database_basics/)                          | JDBC and database fundamentals                             |
+| 25   | [25_design_patterns_and_system_design](25_design_patterns_and_system_design/)        | Design patterns, LLD, HLD, system design prep              |
 
 ## Core topic areas
 
@@ -47,13 +50,16 @@ This workspace is organized by topic and covers Java fundamentals, object-orient
 
 ## Recommended study sequence
 
-1. Learn Java basics and OOP
-2. Master collections, arrays, strings, and hashing
-3. Practice stacks, queues, linked lists, and trees
-4. Study heaps, tries, graphs, and graph algorithms
-5. Cover greedy, DP, and bit manipulation
-6. Learn concurrency and database basics
-7. Finish with design patterns, LLD, HLD, and interview prep
+1. Set up Java correctly and understand how code runs
+2. Learn memory model, references, and string behavior
+3. Understand generics and safe collection usage
+4. Learn Java basics and OOP
+5. Master collections, arrays, strings, and hashing
+6. Practice stacks, queues, linked lists, and trees
+7. Study heaps, tries, graphs, and graph algorithms
+8. Cover greedy, DP, and bit manipulation
+9. Learn concurrency and database basics
+10. Finish with design patterns, LLD, HLD, and interview prep
 
 ## Interview-focused system design section
 

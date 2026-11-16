@@ -70,6 +70,7 @@ for (int i = 2; i <= n; i++) {
 - State: minimum coins needed for amount `x`
 - Recurrence: try each coin and update the best answer for the remaining amount
 - Example: minimum number of coins to make 11 with `[1, 3, 4]` is 3 (`4 + 4 + 3`)
+- This is an unbounded choice: each coin denomination can be reused.
 
 ### 0/1 Knapsack
 
@@ -83,12 +84,20 @@ for (int i = 2; i <= n; i++) {
 
 - Similar to 0/1 knapsack, but an item can be used multiple times.
 - Recurrence usually uses the same row or same index instead of moving backwards.
+- In a one-dimensional table, scan capacities upward so an item can be reused.
 
 ### Longest Increasing Subsequence (LIS)
 
-- State: `dp[i] = length of longest increasing subsequence ending at i`
-- Recurrence: check all earlier positions `j < i` and update when `nums[j] < nums[i]`
-- Use when: you need longest ordered subsequence in a sequence.
+- O(n²) DP: `dp[i]` is the LIS length ending at `i`; scan earlier positions `j < i` and extend when `nums[j] < nums[i]`.
+- O(n log n): patience sorting maintains the smallest possible tail for each subsequence length and uses binary search to place each value.
+- The tails array computes the length; it is not necessarily the actual LIS.
+- Use when: you need the longest strictly increasing subsequence in a sequence.
+
+### Longest Common Subsequence (LCS)
+
+- State: `dp[i][j] = LCS length for the first i characters of one string and first j of the other`.
+- If the characters match, extend the diagonal; otherwise take the maximum of the top and left states.
+- Unlike a substring, a subsequence does not need to be contiguous.
 
 ### House Robber
 
@@ -111,6 +120,19 @@ for (int i = 2; i <= n; i++) {
 - Recurrence: either skip an item or use it to reach the remaining sum
 - Use when: checking feasibility of sum-based problems
 
+## Signature recurrences at a glance
+
+| Family | State | Core recurrence or transition |
+| --- | --- | --- |
+| 0/1 Knapsack | `dp[i][w]` | `max(dp[i - 1][w], value[i - 1] + dp[i - 1][w - weight[i - 1]])` when the item fits; otherwise skip it. |
+| Unbounded Knapsack | `dp[w]` | `max(dp[w], value + dp[w - weight])`; scan capacities upward so the current item can be reused. |
+| LIS, O(n²) | `dp[i]` | `1 + max(dp[j])` for `j < i` and `nums[j] < nums[i]`; default each `dp[i]` to 1. |
+| LIS, O(n log n) | `tails[]` | Binary-search the first tail `>= value` and replace it; append if no such tail exists. The answer is the tails length. |
+| LCS | `dp[i][j]` | If characters match, `dp[i - 1][j - 1] + 1`; otherwise `max(dp[i - 1][j], dp[i][j - 1])`. |
+| Edit Distance | `dp[i][j]` | If characters match, `dp[i - 1][j - 1]`; otherwise `1 + min(delete, insert, replace)` from the neighboring states. |
+
+Identify the problem family first; once the state is clear, its transition usually follows.
+
 ## Interview checklist
 
 - Can you explain the state and recurrence clearly?
@@ -121,18 +143,31 @@ for (int i = 2; i <= n; i++) {
 
 ## Time and space complexity
 
-| Problem | Time | Space |
-| --- | --- | --- |
-| Fibonacci | O(n) | O(n) |
-| Climbing Stairs | O(n) | O(n) |
-| Coin Change (min coins) | O(n × amount) | O(amount) |
-| 0/1 Knapsack | O(n × W) | O(n × W) |
-| LIS | O(n²) | O(n) |
-| Edit Distance | O(m × n) | O(m × n) |
-| House Robber | O(n) | O(n) |
-| Subset Sum | O(n × target) | O(n × target) |
+| Problem                 | Time          | Space         |
+| ----------------------- | ------------- | ------------- |
+| Fibonacci               | O(n)          | O(n)          |
+| Climbing Stairs         | O(n)          | O(n)          |
+| Coin Change (min coins) | O(n × amount) | O(amount)     |
+| 0/1 Knapsack            | O(n × W)      | O(n × W)      |
+| Unbounded Knapsack      | O(n × W)      | O(W)          |
+| LIS (DP)                | O(n²)         | O(n)          |
+| LIS (patience sorting)  | O(n log n)    | O(n)          |
+| LCS                     | O(m × n)      | O(m × n)      |
+| Edit Distance           | O(m × n)      | O(m × n)      |
+| House Robber            | O(n)          | O(n)          |
+| Subset Sum              | O(n × target) | O(n × target) |
 
-Where `n` is the number of elements, `W` is capacity, and `m`, `n` are string lengths.
+Where `n` is the number of items or sequence elements, `W` is capacity, `amount` is the coin target, and `m`, `n` are string lengths where applicable.
+
+## Common interview questions
+
+- Edit Distance (Levenshtein)
+- Longest Common Subsequence
+- Coin Change: minimum number of coins or number of ways
+- Longest Increasing Subsequence
+- 0/1 Knapsack and Equal Subset Sum Partition
+- Target Sum and Subset Sum
+- Longest Common Substring, which must be contiguous (unlike a subsequence)
 
 ## Tips and pitfalls
 
@@ -156,4 +191,3 @@ Where `n` is the number of elements, `W` is capacity, and `m`, `n` are string le
 > “This is a DP problem because the answer depends on smaller overlapping subproblems.”
 
 That is the key observation interviewers usually want.
-
